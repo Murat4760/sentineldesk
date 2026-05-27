@@ -93,7 +93,7 @@ function Nav() {
     <div className="fixed top-4 left-0 right-0 z-50 px-4">
       <nav className={`nav-pill ${scrolled ? "scrolled" : ""} mx-auto flex items-center justify-between gap-4 pl-3 pr-3 py-2 max-w-[720px]`}>
         <Link to="/" className="group flex items-center gap-2 pl-1">
-          <div className="size-7 rounded-lg bg-gradient-to-br from-[#7090FF] to-[#5B7FFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(91,127,255,0.6)] group-hover:scale-110 group-hover:shadow-[0_0_28px_-2px_rgba(91,127,255,0.8)] transition">R</div>
+          <div className="size-7 rounded-lg bg-gradient-to-br from-[#6B8FFF] to-[#4F7AFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(79,122,255,0.6)] group-hover:scale-110 group-hover:shadow-[0_0_28px_-2px_rgba(79,122,255,0.8)] transition">R</div>
           <span className="font-display text-[15px] font-semibold text-white">Ringly</span>
         </Link>
         <div className="hidden md:flex items-center gap-5 text-[13px] text-white/70">
@@ -132,7 +132,7 @@ function DemoCard() {
       {/* phone card */}
       <div className="card-depth p-4 w-full max-w-[420px] mx-auto">
         <div className="flex items-center gap-3 px-2 py-2 border-b border-white/5">
-          <div className="size-9 rounded-full bg-gradient-to-br from-[#5B7FFF] to-[#9D5BFF] flex items-center justify-center text-white text-sm font-semibold">SJ</div>
+          <div className="size-9 rounded-full bg-gradient-to-br from-[#4F7AFF] to-[#4F7AFF] flex items-center justify-center text-white text-sm font-semibold">SJ</div>
           <div>
             <div className="text-[13px] font-medium text-white">Sarah J.</div>
             <div className="text-[11px] text-white/50 font-mono">Incoming call · {String(n * 4).padStart(2, "0")}s</div>
@@ -154,7 +154,7 @@ function DemoCard() {
               <div className={`max-w-[82%] px-3 py-2 rounded-xl text-[13px] leading-snug ${
                 l.role === "caller"
                   ? "bg-white/10 text-white border border-white/10"
-                  : "bg-gradient-to-br from-[#5B7FFF] to-[#4A6FEE] text-white shadow-[0_8px_24px_-12px_rgba(91,127,255,0.7)]"
+                  : "bg-gradient-to-br from-[#4F7AFF] to-[#4A6FEE] text-white shadow-[0_8px_24px_-12px_rgba(79,122,255,0.7)]"
               }`}>
                 {l.text}
               </div>
@@ -191,7 +191,7 @@ function DemoCard() {
         transition={{ delay: 1.2, duration: 0.6 }}
         className="hidden md:flex absolute -top-4 -left-6 card-depth px-3 py-2 items-center gap-2"
       >
-        <MessageSquare className="size-3.5 text-[#5B7FFF]" />
+        <MessageSquare className="size-3.5 text-[#4F7AFF]" />
         <span className="text-[11px] text-white/70">SMS confirmation sent</span>
       </motion.div>
     </div>
@@ -208,18 +208,18 @@ function BentoCards() {
       {/* Wide: voice */}
       <Reveal>
         <div className="bento card-depth md:col-span-2 p-6 md:p-7 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Voice</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Voice</div>
           <h3 className="mt-2 font-display text-2xl text-white">Sounds like a real human.</h3>
           <p className="mt-2 text-sm text-white/60 max-w-md">30+ natural voices with breaths, pauses, and personality. Clone your own in 60 seconds.</p>
           <div className="mt-6 flex items-end gap-[3px] h-20">
             {Array.from({ length: 64 }).map((_, i) => {
               const h = Math.abs(Math.sin(i * 0.4) * 0.5 + Math.sin(i * 0.13) * 0.4) + 0.15;
-              return <span key={i} className="flex-1 rounded-full bg-gradient-to-t from-[#5B7FFF]/40 to-[#9D5BFF]/70" style={{ height: `${Math.min(1, h) * 100}%` }} />;
+              return <span key={i} className="flex-1 rounded-full bg-gradient-to-t from-[#4F7AFF]/40 to-[#4F7AFF]/70" style={{ height: `${Math.min(1, h) * 100}%` }} />;
             })}
           </div>
           <div className="mt-5 flex flex-wrap gap-1.5">
             {["Sophia","Marcus","Aria","David","Luna","Ren"].map((v, i) => (
-              <span key={v} className={`text-[11px] px-2.5 py-1 rounded-full border ${i === 0 ? "bg-[#5B7FFF]/15 border-[#5B7FFF]/40 text-white" : "border-white/10 text-white/60"}`}>{v}</span>
+              <span key={v} className={`text-[11px] px-2.5 py-1 rounded-full border ${i === 0 ? "bg-[#4F7AFF]/15 border-[#4F7AFF]/40 text-white" : "border-white/10 text-white/60"}`}>{v}</span>
             ))}
           </div>
         </div>
@@ -228,7 +228,7 @@ function BentoCards() {
       {/* Calendar */}
       <Reveal delay={0.05}>
         <div className="bento card-depth p-6 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Calendar</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Calendar</div>
           <h3 className="mt-2 font-display text-xl text-white">Books appointments.</h3>
           <div className="mt-4 grid grid-cols-7 gap-1">
             {cal.map(d => {
@@ -239,8 +239,8 @@ function BentoCards() {
               return (
                 <div key={d} className={`aspect-square rounded-md text-[10px] font-mono flex items-center justify-center ${
                   !valid ? "text-white/10" :
-                  today ? "bg-[#5B7FFF] text-white shadow-[0_0_16px_-2px_rgba(91,127,255,0.7)]" :
-                  booked ? "bg-[#5B7FFF]/15 text-[#7090FF] border border-[#5B7FFF]/30" :
+                  today ? "bg-[#4F7AFF] text-white shadow-[0_0_16px_-2px_rgba(79,122,255,0.7)]" :
+                  booked ? "bg-[#4F7AFF]/15 text-[#6B8FFF] border border-[#4F7AFF]/30" :
                   "text-white/40 hover:bg-white/5"
                 }`}>{valid ? day : ""}</div>
               );
@@ -252,7 +252,7 @@ function BentoCards() {
       {/* Languages */}
       <Reveal>
         <div className="bento card-depth p-6 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Languages</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Languages</div>
           <h3 className="mt-2 font-display text-xl text-white">Speaks 30 languages.</h3>
           <div className="mt-4 grid grid-cols-6 gap-1.5">
             {langs.map((f, i) => (
@@ -265,7 +265,7 @@ function BentoCards() {
       {/* Wide: knowledge */}
       <Reveal delay={0.05}>
         <div className="bento card-depth md:col-span-2 p-6 md:p-7 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Knowledge</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Knowledge</div>
           <h3 className="mt-2 font-display text-2xl text-white">Knows your business.</h3>
           <p className="mt-2 text-sm text-white/60 max-w-md">Upload menus, FAQs, pricing. Ringly answers like a senior team member from day one.</p>
           <div className="mt-5 rounded-lg border border-white/10 bg-[#0A0B0F] font-mono text-[12px] overflow-hidden">
@@ -277,9 +277,9 @@ function BentoCards() {
             </div>
             <div className="px-4 py-3 leading-relaxed">
               <span className="text-white/40">{"// persona"}</span><br/>
-              <span className="text-[#9D5BFF]">name</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"Ringly · Smile Dental"</span><br/>
-              <span className="text-[#9D5BFF]">tone</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"warm, concise, never pushy"</span><br/>
-              <span className="text-[#9D5BFF]">escalate_if</span> <span className="text-white/50">=</span> <span className="text-[#5B7FFF]">[</span>"emergency", "billing dispute"<span className="text-[#5B7FFF]">]</span>
+              <span className="text-[#4F7AFF]">name</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"Ringly · Smile Dental"</span><br/>
+              <span className="text-[#4F7AFF]">tone</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"warm, concise, never pushy"</span><br/>
+              <span className="text-[#4F7AFF]">escalate_if</span> <span className="text-white/50">=</span> <span className="text-[#4F7AFF]">[</span>"emergency", "billing dispute"<span className="text-[#4F7AFF]">]</span>
             </div>
           </div>
         </div>
@@ -288,7 +288,7 @@ function BentoCards() {
       {/* Clock */}
       <Reveal>
         <div className="bento card-depth p-6 h-full flex flex-col">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Always on</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Always on</div>
           <h3 className="mt-2 font-display text-xl text-white">24 / 7.</h3>
           <div className="mt-auto pt-4 flex items-center justify-center">
             <div className="relative size-32">
@@ -297,8 +297,8 @@ function BentoCards() {
               {Array.from({ length: 12 }).map((_, i) => (
                 <span key={i} className="absolute left-1/2 top-1/2 w-px h-2 bg-white/20" style={{ transform: `translate(-50%,-50%) rotate(${i * 30}deg) translateY(-58px)` }} />
               ))}
-              <Clock className="absolute inset-0 m-auto size-6 text-[#5B7FFF]" />
-              <div className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 60px -10px rgba(91,127,255,0.5)" }} />
+              <Clock className="absolute inset-0 m-auto size-6 text-[#4F7AFF]" />
+              <div className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 60px -10px rgba(79,122,255,0.5)" }} />
             </div>
           </div>
         </div>
@@ -338,10 +338,10 @@ function Pricing() {
           return (
             <Wrap
               key={t.name}
-              className={`relative ${t.popular ? "gradient-border md:scale-[1.04] md:-my-2 shadow-[0_0_60px_-15px_rgba(91,127,255,0.5)]" : "card-depth"} p-7 flex flex-col`}
+              className={`relative ${t.popular ? "gradient-border md:scale-[1.04] md:-my-2 shadow-[0_0_60px_-15px_rgba(79,122,255,0.5)]" : "card-depth"} p-7 flex flex-col`}
             >
               {t.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full bg-gradient-to-r from-[#5B7FFF] to-[#9D5BFF] text-white shadow-[0_0_20px_-2px_rgba(91,127,255,0.7)]">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full bg-gradient-to-r from-[#4F7AFF] to-[#4F7AFF] text-white shadow-[0_0_20px_-2px_rgba(79,122,255,0.7)]">
                   Most popular
                 </div>
               )}
@@ -354,8 +354,8 @@ function Pricing() {
               <ul className="mt-6 space-y-3 flex-1">
                 {t.feats.map(f => (
                   <li key={f} className="flex items-start gap-2.5 text-[13px] text-white/75">
-                    <div className="mt-0.5 size-4 shrink-0 rounded-full bg-[#5B7FFF]/15 border border-[#5B7FFF]/30 flex items-center justify-center">
-                      <Check className="size-2.5 text-[#7090FF]" strokeWidth={3} />
+                    <div className="mt-0.5 size-4 shrink-0 rounded-full bg-[#4F7AFF]/15 border border-[#4F7AFF]/30 flex items-center justify-center">
+                      <Check className="size-2.5 text-[#6B8FFF]" strokeWidth={3} />
                     </div>
                     {f}
                   </li>
@@ -416,7 +416,7 @@ function Landing() {
               style={{ fontSize: "clamp(48px, 7vw, 88px)", lineHeight: 1.02, letterSpacing: "-0.03em" }}
             >
               Your phone,<br/>
-              <span className="bg-gradient-to-r from-white via-white to-[#9D5BFF] bg-clip-text text-transparent">finally answered.</span>
+              <span className="bg-gradient-to-r from-white via-white to-[#4F7AFF] bg-clip-text text-transparent">finally answered.</span>
             </motion.h1>
 
             <motion.p
@@ -495,7 +495,7 @@ function Landing() {
         <div className="relative max-w-6xl mx-auto px-6">
           <Reveal>
             <div className="max-w-2xl">
-              <div className="text-[11px] uppercase tracking-widest font-mono text-[#5B7FFF]">Features</div>
+              <div className="text-[11px] uppercase tracking-widest font-mono text-[#4F7AFF]">Features</div>
               <h2 className="mt-3 font-display text-4xl md:text-5xl font-semibold text-white tracking-tight" style={{ letterSpacing: "-0.025em" }}>
                 Everything a great receptionist does.<br/>
                 <span className="text-white/50">None of the sick days.</span>
@@ -514,7 +514,7 @@ function Landing() {
         <div className="relative max-w-6xl mx-auto px-6">
           <Reveal>
             <div className="text-center mb-10">
-              <div className="text-[11px] uppercase tracking-widest font-mono text-[#5B7FFF]">Pricing</div>
+              <div className="text-[11px] uppercase tracking-widest font-mono text-[#4F7AFF]">Pricing</div>
               <h2 className="mt-3 font-display text-4xl md:text-5xl font-semibold text-white" style={{ letterSpacing: "-0.025em" }}>
                 Pay for minutes, not seats.
               </h2>
@@ -529,7 +529,7 @@ function Landing() {
       <section className="relative py-24 border-t border-white/5">
         <div className="orb orb-violet" style={{ width: 600, height: 400, bottom: -200, left: "50%", transform: "translateX(-50%)" }} />
         <div className="relative max-w-3xl mx-auto px-6 text-center">
-          <Sparkles className="size-6 text-[#5B7FFF] mx-auto" />
+          <Sparkles className="size-6 text-[#4F7AFF] mx-auto" />
           <h2 className="mt-4 font-display text-4xl md:text-5xl font-semibold text-white" style={{ letterSpacing: "-0.025em" }}>
             Ready in 30 seconds.
           </h2>
@@ -552,7 +552,7 @@ function Landing() {
               <form className="mt-6 flex max-w-sm" onSubmit={e => e.preventDefault()}>
                 <input
                   type="email" placeholder="you@company.com"
-                  className="flex-1 bg-white/[0.04] border border-white/10 rounded-l-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#5B7FFF]/50"
+                  className="flex-1 bg-white/[0.04] border border-white/10 rounded-l-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#4F7AFF]/50"
                 />
                 <button className="btn-primary-glow px-4 rounded-r-lg text-sm font-medium">Subscribe</button>
               </form>
