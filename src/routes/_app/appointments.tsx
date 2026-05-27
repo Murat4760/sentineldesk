@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { mockAppointments } from "@/lib/mock-data";
@@ -121,8 +122,8 @@ function WeekGrid({ onSelect }: { onSelect: (a: any) => void }) {
       </div>
       <div className="grid grid-cols-[60px_repeat(7,1fr)]">
         {hours.map((h, hi) => (
-          <>
-            <div key={h} className="px-2 py-3 text-[10px] font-mono text-muted-foreground border-b border-border text-right">{h}:00</div>
+          <Fragment key={h}>
+            <div className="px-2 py-3 text-[10px] font-mono text-muted-foreground border-b border-border text-right">{h}:00</div>
             {Array.from({ length: 7 }).map((_, di) => {
               const idx = hi * 7 + di;
               const a = mockAppointments[idx % mockAppointments.length];
@@ -142,7 +143,7 @@ function WeekGrid({ onSelect }: { onSelect: (a: any) => void }) {
                 </div>
               );
             })}
-          </>
+          </Fragment>
         ))}
       </div>
     </div>
