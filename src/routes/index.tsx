@@ -384,8 +384,7 @@ function Landing() {
       {/* ===== HERO ===== */}
       <section ref={heroRef} onMouseMove={onMove} className="relative overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32">
         <div className="absolute inset-0 bg-grid-brand [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
-        <div className="orb orb-blue" style={{ width: 600, height: 600, top: -180, right: -120 }} />
-        <div className="orb orb-violet" style={{ width: 460, height: 460, bottom: -160, left: -140 }} />
+        <div className="orb orb-blue" style={{ width: 720, height: 720, bottom: -300, right: -200 }} />
         <div className="spotlight" />
 
         <div className="relative max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
