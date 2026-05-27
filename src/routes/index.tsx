@@ -45,12 +45,13 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 function MagneticButton({ children, className = "", as: As = "button", ...props }: any) {
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const x = useMotionValue(0); const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 200, damping: 15 });
   const sy = useSpring(y, { stiffness: 200, damping: 15 });
   return (
     <motion.div
+      ref={ref}
       style={{ x: sx, y: sy, display: "inline-block" }}
       onMouseMove={(e) => {
         const el = ref.current; if (!el) return;
@@ -60,7 +61,7 @@ function MagneticButton({ children, className = "", as: As = "button", ...props 
       }}
       onMouseLeave={() => { x.set(0); y.set(0); }}
     >
-      <As ref={ref as any} className={className} {...props}>{children}</As>
+      <As className={className} {...props}>{children}</As>
     </motion.div>
   );
 }
