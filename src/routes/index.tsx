@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
   ArrowRight, Check, Play, Clock, Sparkles,
-  Phone, MessageSquare, Twitter, Github, Linkedin,
+  Phone, Twitter, Github, Linkedin,
 } from "lucide-react";
 import { LiveWaveform } from "@/components/effects/Waveform";
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
@@ -19,30 +19,7 @@ export const Route = createFileRoute("/")({
 
 /* ----------------------- helpers ----------------------- */
 
-function useCountUp(target: number, duration = 1400) {
-  const [value, setValue] = useState(0);
-  const ref = useRef<HTMLSpanElement | null>(null);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
-  useEffect(() => {
-    if (!inView) return;
-    const start = performance.now();
-    let raf = 0;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setValue(Math.round(target * eased));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, target, duration]);
-  return { ref, value };
-}
 
-function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const { ref, value } = useCountUp(to);
-  return <span ref={ref} className="font-mono tabular-nums">{value.toLocaleString()}{suffix}</span>;
-}
 
 function MagneticButton({ children, className = "", as: As = "button", ...props }: any) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -93,7 +70,7 @@ function Nav() {
     <div className="fixed top-4 left-0 right-0 z-50 px-4">
       <nav className={`nav-pill ${scrolled ? "scrolled" : ""} mx-auto flex items-center justify-between gap-4 pl-3 pr-3 py-2 max-w-[720px]`}>
         <Link to="/" className="group flex items-center gap-2 pl-1">
-          <div className="size-7 rounded-lg bg-gradient-to-br from-[#7090FF] to-[#5B7FFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(91,127,255,0.6)] group-hover:scale-110 group-hover:shadow-[0_0_28px_-2px_rgba(91,127,255,0.8)] transition">R</div>
+          <div className="size-7 rounded-lg bg-[#4F7AFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(79,122,255,0.6)] group-hover:shadow-[0_0_28px_-2px_rgba(79,122,255,0.8)] transition">R</div>
           <span className="font-display text-[15px] font-semibold text-white">Ringly</span>
         </Link>
         <div className="hidden md:flex items-center gap-5 text-[13px] text-white/70">
@@ -132,14 +109,13 @@ function DemoCard() {
       {/* phone card */}
       <div className="card-depth p-4 w-full max-w-[420px] mx-auto">
         <div className="flex items-center gap-3 px-2 py-2 border-b border-white/5">
-          <div className="size-9 rounded-full bg-gradient-to-br from-[#5B7FFF] to-[#9D5BFF] flex items-center justify-center text-white text-sm font-semibold">SJ</div>
+          <div className="size-9 rounded-full bg-[#4F7AFF]/20 border border-[#4F7AFF]/30 flex items-center justify-center text-white text-sm font-semibold">SJ</div>
           <div>
-            <div className="text-[13px] font-medium text-white">Sarah J.</div>
+            <div className="text-[13px] font-medium text-white">Sarah J. <span className="text-white/40 font-normal">· example</span></div>
             <div className="text-[11px] text-white/50 font-mono">Incoming call · {String(n * 4).padStart(2, "0")}s</div>
           </div>
-          <div className="ml-auto flex items-center gap-2">
-            <span className="size-2 rounded-full bg-[#4ADE80] dot-pulse" />
-            <span className="text-[10px] uppercase tracking-wider text-white/60">Live</span>
+          <div className="ml-auto">
+            <span className="text-[10px] uppercase tracking-wider text-white/50 font-mono">Demo conversation</span>
           </div>
         </div>
 
@@ -154,7 +130,7 @@ function DemoCard() {
               <div className={`max-w-[82%] px-3 py-2 rounded-xl text-[13px] leading-snug ${
                 l.role === "caller"
                   ? "bg-white/10 text-white border border-white/10"
-                  : "bg-gradient-to-br from-[#5B7FFF] to-[#4A6FEE] text-white shadow-[0_8px_24px_-12px_rgba(91,127,255,0.7)]"
+                  : "bg-gradient-to-br from-[#4F7AFF] to-[#4A6FEE] text-white shadow-[0_8px_24px_-12px_rgba(79,122,255,0.7)]"
               }`}>
                 {l.text}
               </div>
@@ -169,30 +145,20 @@ function DemoCard() {
         </div>
       </div>
 
-      {/* floating booked notification */}
+      {/* floating: try a demo call */}
       <motion.div
         initial={{ opacity: 0, y: 12, x: 20 }}
         animate={{ opacity: 1, y: 0, x: 0 }}
         transition={{ delay: 0.8, duration: 0.6 }}
         className="absolute -bottom-6 -right-2 sm:-right-6 card-depth px-3.5 py-3 flex items-center gap-2.5 w-[230px]"
       >
-        <div className="size-7 rounded-md bg-[#4ADE80]/15 border border-[#4ADE80]/30 flex items-center justify-center">
-          <Check className="size-3.5 text-[#4ADE80]" />
+        <div className="size-7 rounded-md bg-[#4F7AFF]/15 border border-[#4F7AFF]/30 flex items-center justify-center">
+          <Phone className="size-3.5 text-[#4F7AFF]" />
         </div>
         <div>
-          <div className="text-[12px] font-medium text-white">Appointment booked</div>
-          <div className="text-[11px] text-white/50 font-mono">Thu · 2:00 PM</div>
+          <div className="text-[12px] font-medium text-white">Try a demo call</div>
+          <div className="text-[11px] text-white/50 font-mono">Hear it yourself</div>
         </div>
-      </motion.div>
-
-      {/* secondary float */}
-      <motion.div
-        initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-        className="hidden md:flex absolute -top-4 -left-6 card-depth px-3 py-2 items-center gap-2"
-      >
-        <MessageSquare className="size-3.5 text-[#5B7FFF]" />
-        <span className="text-[11px] text-white/70">SMS confirmation sent</span>
       </motion.div>
     </div>
   );
@@ -208,18 +174,18 @@ function BentoCards() {
       {/* Wide: voice */}
       <Reveal>
         <div className="bento card-depth md:col-span-2 p-6 md:p-7 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Voice</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Voice</div>
           <h3 className="mt-2 font-display text-2xl text-white">Sounds like a real human.</h3>
           <p className="mt-2 text-sm text-white/60 max-w-md">30+ natural voices with breaths, pauses, and personality. Clone your own in 60 seconds.</p>
           <div className="mt-6 flex items-end gap-[3px] h-20">
             {Array.from({ length: 64 }).map((_, i) => {
               const h = Math.abs(Math.sin(i * 0.4) * 0.5 + Math.sin(i * 0.13) * 0.4) + 0.15;
-              return <span key={i} className="flex-1 rounded-full bg-gradient-to-t from-[#5B7FFF]/40 to-[#9D5BFF]/70" style={{ height: `${Math.min(1, h) * 100}%` }} />;
+              return <span key={i} className="flex-1 rounded-full bg-gradient-to-t from-[#4F7AFF]/40 to-[#4F7AFF]/70" style={{ height: `${Math.min(1, h) * 100}%` }} />;
             })}
           </div>
           <div className="mt-5 flex flex-wrap gap-1.5">
             {["Sophia","Marcus","Aria","David","Luna","Ren"].map((v, i) => (
-              <span key={v} className={`text-[11px] px-2.5 py-1 rounded-full border ${i === 0 ? "bg-[#5B7FFF]/15 border-[#5B7FFF]/40 text-white" : "border-white/10 text-white/60"}`}>{v}</span>
+              <span key={v} className={`text-[11px] px-2.5 py-1 rounded-full border ${i === 0 ? "bg-[#4F7AFF]/15 border-[#4F7AFF]/40 text-white" : "border-white/10 text-white/60"}`}>{v}</span>
             ))}
           </div>
         </div>
@@ -228,7 +194,7 @@ function BentoCards() {
       {/* Calendar */}
       <Reveal delay={0.05}>
         <div className="bento card-depth p-6 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Calendar</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Calendar</div>
           <h3 className="mt-2 font-display text-xl text-white">Books appointments.</h3>
           <div className="mt-4 grid grid-cols-7 gap-1">
             {cal.map(d => {
@@ -239,8 +205,8 @@ function BentoCards() {
               return (
                 <div key={d} className={`aspect-square rounded-md text-[10px] font-mono flex items-center justify-center ${
                   !valid ? "text-white/10" :
-                  today ? "bg-[#5B7FFF] text-white shadow-[0_0_16px_-2px_rgba(91,127,255,0.7)]" :
-                  booked ? "bg-[#5B7FFF]/15 text-[#7090FF] border border-[#5B7FFF]/30" :
+                  today ? "bg-[#4F7AFF] text-white shadow-[0_0_16px_-2px_rgba(79,122,255,0.7)]" :
+                  booked ? "bg-[#4F7AFF]/15 text-[#6B8FFF] border border-[#4F7AFF]/30" :
                   "text-white/40 hover:bg-white/5"
                 }`}>{valid ? day : ""}</div>
               );
@@ -252,7 +218,7 @@ function BentoCards() {
       {/* Languages */}
       <Reveal>
         <div className="bento card-depth p-6 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Languages</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Languages</div>
           <h3 className="mt-2 font-display text-xl text-white">Speaks 30 languages.</h3>
           <div className="mt-4 grid grid-cols-6 gap-1.5">
             {langs.map((f, i) => (
@@ -265,7 +231,7 @@ function BentoCards() {
       {/* Wide: knowledge */}
       <Reveal delay={0.05}>
         <div className="bento card-depth md:col-span-2 p-6 md:p-7 h-full">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Knowledge</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Knowledge</div>
           <h3 className="mt-2 font-display text-2xl text-white">Knows your business.</h3>
           <p className="mt-2 text-sm text-white/60 max-w-md">Upload menus, FAQs, pricing. Ringly answers like a senior team member from day one.</p>
           <div className="mt-5 rounded-lg border border-white/10 bg-[#0A0B0F] font-mono text-[12px] overflow-hidden">
@@ -277,9 +243,9 @@ function BentoCards() {
             </div>
             <div className="px-4 py-3 leading-relaxed">
               <span className="text-white/40">{"// persona"}</span><br/>
-              <span className="text-[#9D5BFF]">name</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"Ringly · Smile Dental"</span><br/>
-              <span className="text-[#9D5BFF]">tone</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"warm, concise, never pushy"</span><br/>
-              <span className="text-[#9D5BFF]">escalate_if</span> <span className="text-white/50">=</span> <span className="text-[#5B7FFF]">[</span>"emergency", "billing dispute"<span className="text-[#5B7FFF]">]</span>
+              <span className="text-[#4F7AFF]">name</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"Ringly · Smile Dental"</span><br/>
+              <span className="text-[#4F7AFF]">tone</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"warm, concise, never pushy"</span><br/>
+              <span className="text-[#4F7AFF]">escalate_if</span> <span className="text-white/50">=</span> <span className="text-[#4F7AFF]">[</span>"emergency", "billing dispute"<span className="text-[#4F7AFF]">]</span>
             </div>
           </div>
         </div>
@@ -288,7 +254,7 @@ function BentoCards() {
       {/* Clock */}
       <Reveal>
         <div className="bento card-depth p-6 h-full flex flex-col">
-          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Always on</div>
+          <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Always on</div>
           <h3 className="mt-2 font-display text-xl text-white">24 / 7.</h3>
           <div className="mt-auto pt-4 flex items-center justify-center">
             <div className="relative size-32">
@@ -297,8 +263,8 @@ function BentoCards() {
               {Array.from({ length: 12 }).map((_, i) => (
                 <span key={i} className="absolute left-1/2 top-1/2 w-px h-2 bg-white/20" style={{ transform: `translate(-50%,-50%) rotate(${i * 30}deg) translateY(-58px)` }} />
               ))}
-              <Clock className="absolute inset-0 m-auto size-6 text-[#5B7FFF]" />
-              <div className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 60px -10px rgba(91,127,255,0.5)" }} />
+              <Clock className="absolute inset-0 m-auto size-6 text-[#4F7AFF]" />
+              <div className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 60px -10px rgba(79,122,255,0.5)" }} />
             </div>
           </div>
         </div>
@@ -338,10 +304,10 @@ function Pricing() {
           return (
             <Wrap
               key={t.name}
-              className={`relative ${t.popular ? "gradient-border md:scale-[1.04] md:-my-2 shadow-[0_0_60px_-15px_rgba(91,127,255,0.5)]" : "card-depth"} p-7 flex flex-col`}
+              className={`relative ${t.popular ? "gradient-border md:scale-[1.04] md:-my-2 shadow-[0_0_60px_-15px_rgba(79,122,255,0.5)]" : "card-depth"} p-7 flex flex-col`}
             >
               {t.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full bg-gradient-to-r from-[#5B7FFF] to-[#9D5BFF] text-white shadow-[0_0_20px_-2px_rgba(91,127,255,0.7)]">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full bg-gradient-to-r from-[#4F7AFF] to-[#4F7AFF] text-white shadow-[0_0_20px_-2px_rgba(79,122,255,0.7)]">
                   Most popular
                 </div>
               )}
@@ -354,8 +320,8 @@ function Pricing() {
               <ul className="mt-6 space-y-3 flex-1">
                 {t.feats.map(f => (
                   <li key={f} className="flex items-start gap-2.5 text-[13px] text-white/75">
-                    <div className="mt-0.5 size-4 shrink-0 rounded-full bg-[#5B7FFF]/15 border border-[#5B7FFF]/30 flex items-center justify-center">
-                      <Check className="size-2.5 text-[#7090FF]" strokeWidth={3} />
+                    <div className="mt-0.5 size-4 shrink-0 rounded-full bg-[#4F7AFF]/15 border border-[#4F7AFF]/30 flex items-center justify-center">
+                      <Check className="size-2.5 text-[#6B8FFF]" strokeWidth={3} />
                     </div>
                     {f}
                   </li>
@@ -395,8 +361,7 @@ function Landing() {
       {/* ===== HERO ===== */}
       <section ref={heroRef} onMouseMove={onMove} className="relative overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32">
         <div className="absolute inset-0 bg-grid-brand [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
-        <div className="orb orb-blue" style={{ width: 600, height: 600, top: -180, right: -120 }} />
-        <div className="orb orb-violet" style={{ width: 460, height: 460, bottom: -160, left: -140 }} />
+        <div className="orb orb-blue" style={{ width: 720, height: 720, bottom: -300, right: -200 }} />
         <div className="spotlight" />
 
         <div className="relative max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
@@ -406,17 +371,17 @@ function Landing() {
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 text-[11px] font-mono px-2.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/70"
             >
-              <span className="size-1.5 rounded-full bg-[#4ADE80] dot-pulse" />
-              Live — <CountUp to={2847} /> calls handled today
+              <span className="size-1.5 rounded-full bg-[#4F7AFF] dot-pulse" />
+              Now in early access
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
-              className="font-display font-semibold text-white mt-6"
+              className="font-display font-semibold text-[#F5F5F7] mt-6"
               style={{ fontSize: "clamp(48px, 7vw, 88px)", lineHeight: 1.02, letterSpacing: "-0.03em" }}
             >
               Your phone,<br/>
-              <span className="bg-gradient-to-r from-white via-white to-[#9D5BFF] bg-clip-text text-transparent">finally answered.</span>
+              finally answered.
             </motion.h1>
 
             <motion.p
@@ -448,14 +413,11 @@ function Landing() {
 
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-12"
+              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-white/55"
             >
-              <div className="text-[11px] uppercase tracking-widest font-mono text-white/40">Trusted by 200+ businesses</div>
-              <div className="mt-4 flex items-center gap-8 flex-wrap opacity-60 grayscale">
-                {["Northwind","Acme","Lumen","Helio","Vertex","Pinecrest"].map(l => (
-                  <span key={l} className="font-display text-lg font-semibold text-white/70">{l}</span>
-                ))}
-              </div>
+              <span className="inline-flex items-center gap-2"><Check className="size-3.5 text-[#4F7AFF]" /> Setup in 5 minutes</span>
+              <span className="inline-flex items-center gap-2"><Check className="size-3.5 text-[#4F7AFF]" /> No credit card required</span>
+              <span className="inline-flex items-center gap-2"><Check className="size-3.5 text-[#4F7AFF]" /> Cancel anytime</span>
             </motion.div>
           </div>
 
@@ -470,24 +432,8 @@ function Landing() {
         </div>
       </section>
 
-      {/* ===== STATS STRIP ===== */}
-      <section className="relative border-y border-white/5 bg-[#0C0E14]">
-        <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { label: "Calls answered", val: 1840293, suffix: "" },
-            { label: "Avg pickup", val: 1, suffix: "s" },
-            { label: "Languages", val: 30 },
-            { label: "Uptime", val: 99, suffix: ".99%" },
-          ].map(s => (
-            <div key={s.label}>
-              <div className="font-display text-3xl md:text-4xl font-semibold text-white">
-                <CountUp to={s.val} suffix={s.suffix ?? ""} />
-              </div>
-              <div className="mt-1 text-[12px] font-mono uppercase tracking-wider text-white/40">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+
+
 
       {/* ===== FEATURES BENTO ===== */}
       <section id="features" className="relative py-24 md:py-32">
@@ -495,7 +441,7 @@ function Landing() {
         <div className="relative max-w-6xl mx-auto px-6">
           <Reveal>
             <div className="max-w-2xl">
-              <div className="text-[11px] uppercase tracking-widest font-mono text-[#5B7FFF]">Features</div>
+              <div className="text-[11px] uppercase tracking-widest font-mono text-[#4F7AFF]">Features</div>
               <h2 className="mt-3 font-display text-4xl md:text-5xl font-semibold text-white tracking-tight" style={{ letterSpacing: "-0.025em" }}>
                 Everything a great receptionist does.<br/>
                 <span className="text-white/50">None of the sick days.</span>
@@ -514,7 +460,7 @@ function Landing() {
         <div className="relative max-w-6xl mx-auto px-6">
           <Reveal>
             <div className="text-center mb-10">
-              <div className="text-[11px] uppercase tracking-widest font-mono text-[#5B7FFF]">Pricing</div>
+              <div className="text-[11px] uppercase tracking-widest font-mono text-[#4F7AFF]">Pricing</div>
               <h2 className="mt-3 font-display text-4xl md:text-5xl font-semibold text-white" style={{ letterSpacing: "-0.025em" }}>
                 Pay for minutes, not seats.
               </h2>
@@ -527,9 +473,9 @@ function Landing() {
 
       {/* ===== CTA ===== */}
       <section className="relative py-24 border-t border-white/5">
-        <div className="orb orb-violet" style={{ width: 600, height: 400, bottom: -200, left: "50%", transform: "translateX(-50%)" }} />
+        <div className="orb orb-blue" style={{ width: 520, height: 360, bottom: -180, left: "50%", transform: "translateX(-50%)", opacity: 0.6 }} />
         <div className="relative max-w-3xl mx-auto px-6 text-center">
-          <Sparkles className="size-6 text-[#5B7FFF] mx-auto" />
+          <Sparkles className="size-6 text-[#4F7AFF] mx-auto" />
           <h2 className="mt-4 font-display text-4xl md:text-5xl font-semibold text-white" style={{ letterSpacing: "-0.025em" }}>
             Ready in 30 seconds.
           </h2>
@@ -547,12 +493,12 @@ function Landing() {
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid md:grid-cols-5 gap-10">
             <div className="md:col-span-2">
-              <div className="font-display text-4xl font-semibold wordmark-grad">Ringly</div>
+              <div className="font-display text-4xl font-semibold text-white">Ringly</div>
               <p className="mt-3 text-sm text-white/50 max-w-xs">The AI receptionist that picks up every call, books every appointment, and never takes a break.</p>
               <form className="mt-6 flex max-w-sm" onSubmit={e => e.preventDefault()}>
                 <input
                   type="email" placeholder="you@company.com"
-                  className="flex-1 bg-white/[0.04] border border-white/10 rounded-l-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#5B7FFF]/50"
+                  className="flex-1 bg-white/[0.04] border border-white/10 rounded-l-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#4F7AFF]/50"
                 />
                 <button className="btn-primary-glow px-4 rounded-r-lg text-sm font-medium">Subscribe</button>
               </form>
