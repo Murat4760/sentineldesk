@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -162,7 +163,7 @@ function BehaviorTab() {
 
 function HoursTab() {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const hours = Array.from({ length: 24 });
+  const hours = Array.from({ length: 24 }, (_, i) => i);
   const [active, setActive] = useState<Set<string>>(() => {
     const s = new Set<string>();
     for (let d = 0; d < 5; d++) for (let h = 8; h < 18; h++) s.add(`${d}-${h}`);
