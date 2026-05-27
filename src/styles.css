@@ -206,7 +206,7 @@
 .gradient-border {
   background:
     linear-gradient(#12141A, #12141A) padding-box,
-    linear-gradient(135deg, #5B7FFF, #9D5BFF) border-box;
+    linear-gradient(135deg, #4F7AFF, #6B8FFF) border-box;
   border: 1px solid transparent;
   border-radius: 14px;
 }
