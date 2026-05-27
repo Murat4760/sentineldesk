@@ -1,191 +1,590 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { ArrowRight, Check, PhoneCall, Sparkles, Zap, Shield } from "lucide-react";
+import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
+import {
+  ArrowRight, Check, Play, Clock, Sparkles,
+  Phone, MessageSquare, Twitter, Github, Linkedin,
+} from "lucide-react";
 import { LiveWaveform } from "@/components/effects/Waveform";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ringly — AI receptionist that never misses a call" },
-      { name: "description", content: "Ringly is the AI phone receptionist for small businesses. Book appointments, answer questions, and capture leads 24/7." },
+      { title: "Ringly — Your phone, finally answered." },
+      { name: "description", content: "Ringly picks up every call, books appointments, and never sleeps. Sound like you. Available in 30 seconds." },
     ],
   }),
   component: Landing,
 });
 
-const demoLines = [
-  { role: "ai", text: "Hi, thanks for calling Smile Dental. How can I help?" },
-  { role: "caller", text: "I need to book a cleaning." },
-  { role: "ai", text: "Of course. Are you a current patient?" },
+/* ----------------------- helpers ----------------------- */
+
+function useCountUp(target: number, duration = 1400) {
+  const [value, setValue] = useState(0);
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const inView = useInView(ref, { once: true, margin: "-50px" });
+  useEffect(() => {
+    if (!inView) return;
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(Math.round(target * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, target, duration]);
+  return { ref, value };
+}
+
+function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const { ref, value } = useCountUp(to);
+  return <span ref={ref} className="font-mono tabular-nums">{value.toLocaleString()}{suffix}</span>;
+}
+
+function MagneticButton({ children, className = "", as: As = "button", ...props }: any) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const x = useMotionValue(0); const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 200, damping: 15 });
+  const sy = useSpring(y, { stiffness: 200, damping: 15 });
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x: sx, y: sy, display: "inline-block" }}
+      onMouseMove={(e) => {
+        const el = ref.current; if (!el) return;
+        const r = el.getBoundingClientRect();
+        x.set(((e.clientX - r.left) / r.width - 0.5) * 12);
+        y.set(((e.clientY - r.top) / r.height - 0.5) * 8);
+      }}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+    >
+      <As className={className} {...props}>{children}</As>
+    </motion.div>
+  );
+}
+
+function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ----------------------- nav ----------------------- */
+
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <div className="fixed top-4 left-0 right-0 z-50 px-4">
+      <nav className={`nav-pill ${scrolled ? "scrolled" : ""} mx-auto flex items-center justify-between gap-4 pl-3 pr-3 py-2 max-w-[720px]`}>
+        <Link to="/" className="group flex items-center gap-2 pl-1">
+          <div className="size-7 rounded-lg bg-gradient-to-br from-[#7090FF] to-[#5B7FFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(91,127,255,0.6)] group-hover:scale-110 group-hover:shadow-[0_0_28px_-2px_rgba(91,127,255,0.8)] transition">R</div>
+          <span className="font-display text-[15px] font-semibold text-white">Ringly</span>
+        </Link>
+        <div className="hidden md:flex items-center gap-5 text-[13px] text-white/70">
+          <a href="#features" className="hover:text-white transition">Features</a>
+          <a href="#pricing" className="hover:text-white transition">Pricing</a>
+          <Link to="/dashboard" className="hover:text-white transition">Demo</Link>
+        </div>
+        <Link to="/signup" className="text-[13px] font-medium text-white btn-primary-glow px-3.5 py-1.5 rounded-full">
+          Get started
+        </Link>
+      </nav>
+    </div>
+  );
+}
+
+/* ----------------------- hero demo card ----------------------- */
+
+const transcript = [
+  { role: "ai", text: "Hi, thanks for calling Smile Dental — how can I help?" },
+  { role: "caller", text: "Hey, I'd like to book a cleaning this week." },
+  { role: "ai", text: "Of course. Are you an existing patient?" },
   { role: "caller", text: "Yes, Sarah Johnson." },
-  { role: "ai", text: "Found you. Friday 9am or Monday 11am?" },
-  { role: "caller", text: "Friday works." },
-  { role: "ai", text: "Booked. Confirmation sent." },
+  { role: "ai", text: "Found you. I have Thursday 2pm or Friday 9am." },
+  { role: "caller", text: "Thursday at 2 works." },
+  { role: "ai", text: "Booked — confirmation just sent to your phone." },
 ];
 
-function Landing() {
-  const [shown, setShown] = useState(1);
+function DemoCard() {
+  const [n, setN] = useState(1);
   useEffect(() => {
-    const i = setInterval(() => setShown(s => (s >= demoLines.length ? 1 : s + 1)), 1800);
-    return () => clearInterval(i);
+    const id = setInterval(() => setN(v => (v >= transcript.length ? 1 : v + 1)), 1700);
+    return () => clearInterval(id);
   }, []);
-
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Nav */}
-      <nav className="border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-semibold">
-            <div className="size-6 rounded-md bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">R</div>
-            Ringly
-          </Link>
-          <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#features" className="hover:text-foreground transition">Features</a>
-            <a href="#pricing" className="hover:text-foreground transition">Pricing</a>
-            <a href="#" className="hover:text-foreground transition">Docs</a>
+    <div className="relative">
+      {/* phone card */}
+      <div className="card-depth p-4 w-full max-w-[420px] mx-auto">
+        <div className="flex items-center gap-3 px-2 py-2 border-b border-white/5">
+          <div className="size-9 rounded-full bg-gradient-to-br from-[#5B7FFF] to-[#9D5BFF] flex items-center justify-center text-white text-sm font-semibold">SJ</div>
+          <div>
+            <div className="text-[13px] font-medium text-white">Sarah J.</div>
+            <div className="text-[11px] text-white/50 font-mono">Incoming call · {String(n * 4).padStart(2, "0")}s</div>
           </div>
-          <div className="flex items-center gap-2">
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5">Log in</Link>
-            <Link to="/signup" className="text-sm bg-foreground text-background px-3 py-1.5 rounded-md hover:opacity-90 transition">Get started</Link>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="size-2 rounded-full bg-[#4ADE80] dot-pulse" />
+            <span className="text-[10px] uppercase tracking-wider text-white/60">Live</span>
           </div>
         </div>
-      </nav>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid bg-grid-fade opacity-50" />
-        <div className="relative max-w-6xl mx-auto px-6 pt-20 pb-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 border border-border rounded-full bg-card mb-6"
-          >
-            <Sparkles className="size-3 text-primary" />
-            New — book appointments end to end
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}
-            className="text-5xl md:text-6xl font-semibold tracking-tight max-w-3xl mx-auto"
-          >
-            The AI receptionist that <span className="text-primary">never misses a call</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-            className="mt-5 text-lg text-muted-foreground max-w-xl mx-auto"
-          >
-            Answer every call in seconds. Book appointments, qualify leads, and capture details — 24/7.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}
-            className="mt-8 flex items-center justify-center gap-3"
-          >
-            <Link to="/signup" className="inline-flex items-center gap-1.5 bg-foreground text-background px-4 py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition">
-              Start free trial <ArrowRight className="size-3.5" />
-            </Link>
-            <Link to="/dashboard" className="inline-flex items-center gap-1.5 border border-border bg-card px-4 py-2.5 rounded-md text-sm font-medium hover:border-foreground/20 transition">
-              View demo
-            </Link>
-          </motion.div>
-
-          {/* Live demo widget */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
-            className="mt-16 max-w-2xl mx-auto border border-border rounded-xl bg-card shadow-sm overflow-hidden text-left"
-          >
-            <div className="h-10 px-4 border-b border-border flex items-center gap-2 bg-muted/30">
-              <span className="size-2 rounded-full bg-[color:var(--color-success)] pulse-ring" />
-              <span className="text-xs font-medium">Live call · 00:{String(shown * 5).padStart(2, "0")}</span>
-              <span className="ml-auto font-mono text-xs text-muted-foreground">+1 (415) 555-0142</span>
-              <LiveWaveform bars={12} className="h-4" />
-            </div>
-            <div className="p-5 space-y-3 min-h-[280px]">
-              {demoLines.slice(0, shown).map((l, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-                  className={`flex ${l.role === "caller" ? "justify-end" : "justify-start"}`}
-                >
-                  <div className={`max-w-[80%] px-3 py-2 rounded-lg text-sm ${l.role === "caller" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                    {l.text}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+        <div className="py-4 px-1 space-y-2.5 min-h-[260px]">
+          {transcript.slice(0, n).map((l, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className={`flex ${l.role === "caller" ? "justify-end" : "justify-start"}`}
+            >
+              <div className={`max-w-[82%] px-3 py-2 rounded-xl text-[13px] leading-snug ${
+                l.role === "caller"
+                  ? "bg-white/10 text-white border border-white/10"
+                  : "bg-gradient-to-br from-[#5B7FFF] to-[#4A6FEE] text-white shadow-[0_8px_24px_-12px_rgba(91,127,255,0.7)]"
+              }`}>
+                {l.text}
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </section>
 
-      {/* Features */}
-      <section id="features" className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <div className="grid md:grid-cols-3 gap-px bg-border border border-border rounded-xl overflow-hidden">
-            {[
-              { icon: PhoneCall, title: "Answer instantly", desc: "Pick up every call within 1 ring. No hold music. No voicemails missed." },
-              { icon: Zap, title: "Book in real time", desc: "Connects to your calendar and books while the caller is still on the line." },
-              { icon: Shield, title: "Sounds like you", desc: "Choose from 30+ natural voices. Add your brand greeting and FAQ." },
-            ].map((f, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="bg-background p-8"
-              >
-                <f.icon className="size-5 text-primary" />
-                <h3 className="mt-4 text-lg font-semibold tracking-tight">{f.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{f.desc}</p>
-              </motion.div>
+        <div className="flex items-center gap-3 px-2 py-2 border-t border-white/5">
+          <Phone className="size-3.5 text-white/40" />
+          <LiveWaveform bars={28} className="h-5 flex-1" />
+          <span className="font-mono text-[11px] text-white/40">+1 415 555-0142</span>
+        </div>
+      </div>
+
+      {/* floating booked notification */}
+      <motion.div
+        initial={{ opacity: 0, y: 12, x: 20 }}
+        animate={{ opacity: 1, y: 0, x: 0 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        className="absolute -bottom-6 -right-2 sm:-right-6 card-depth px-3.5 py-3 flex items-center gap-2.5 w-[230px]"
+      >
+        <div className="size-7 rounded-md bg-[#4ADE80]/15 border border-[#4ADE80]/30 flex items-center justify-center">
+          <Check className="size-3.5 text-[#4ADE80]" />
+        </div>
+        <div>
+          <div className="text-[12px] font-medium text-white">Appointment booked</div>
+          <div className="text-[11px] text-white/50 font-mono">Thu · 2:00 PM</div>
+        </div>
+      </motion.div>
+
+      {/* secondary float */}
+      <motion.div
+        initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+        className="hidden md:flex absolute -top-4 -left-6 card-depth px-3 py-2 items-center gap-2"
+      >
+        <MessageSquare className="size-3.5 text-[#5B7FFF]" />
+        <span className="text-[11px] text-white/70">SMS confirmation sent</span>
+      </motion.div>
+    </div>
+  );
+}
+
+/* ----------------------- bento features ----------------------- */
+
+function BentoCards() {
+  const langs = ["🇺🇸","🇬🇧","🇪🇸","🇫🇷","🇩🇪","🇮🇹","🇵🇹","🇳🇱","🇸🇪","🇩🇰","🇯🇵","🇰🇷","🇨🇳","🇮🇳","🇹🇷","🇵🇱","🇨🇿","🇬🇷","🇮🇱","🇸🇦","🇧🇷","🇲🇽","🇦🇷","🇻🇳","🇹🇭","🇮🇩","🇲🇾","🇺🇦","🇳🇴","🇫🇮"];
+  const cal = Array.from({ length: 35 }, (_, i) => i);
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Wide: voice */}
+      <Reveal>
+        <div className="bento card-depth md:col-span-2 p-6 md:p-7 h-full">
+          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Voice</div>
+          <h3 className="mt-2 font-display text-2xl text-white">Sounds like a real human.</h3>
+          <p className="mt-2 text-sm text-white/60 max-w-md">30+ natural voices with breaths, pauses, and personality. Clone your own in 60 seconds.</p>
+          <div className="mt-6 flex items-end gap-[3px] h-20">
+            {Array.from({ length: 64 }).map((_, i) => {
+              const h = Math.abs(Math.sin(i * 0.4) * 0.5 + Math.sin(i * 0.13) * 0.4) + 0.15;
+              return <span key={i} className="flex-1 rounded-full bg-gradient-to-t from-[#5B7FFF]/40 to-[#9D5BFF]/70" style={{ height: `${Math.min(1, h) * 100}%` }} />;
+            })}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-1.5">
+            {["Sophia","Marcus","Aria","David","Luna","Ren"].map((v, i) => (
+              <span key={v} className={`text-[11px] px-2.5 py-1 rounded-full border ${i === 0 ? "bg-[#5B7FFF]/15 border-[#5B7FFF]/40 text-white" : "border-white/10 text-white/60"}`}>{v}</span>
             ))}
           </div>
         </div>
+      </Reveal>
+
+      {/* Calendar */}
+      <Reveal delay={0.05}>
+        <div className="bento card-depth p-6 h-full">
+          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Calendar</div>
+          <h3 className="mt-2 font-display text-xl text-white">Books appointments.</h3>
+          <div className="mt-4 grid grid-cols-7 gap-1">
+            {cal.map(d => {
+              const day = d - 2;
+              const valid = day > 0 && day <= 30;
+              const booked = [4, 8, 11, 17, 22, 25].includes(day);
+              const today = day === 14;
+              return (
+                <div key={d} className={`aspect-square rounded-md text-[10px] font-mono flex items-center justify-center ${
+                  !valid ? "text-white/10" :
+                  today ? "bg-[#5B7FFF] text-white shadow-[0_0_16px_-2px_rgba(91,127,255,0.7)]" :
+                  booked ? "bg-[#5B7FFF]/15 text-[#7090FF] border border-[#5B7FFF]/30" :
+                  "text-white/40 hover:bg-white/5"
+                }`}>{valid ? day : ""}</div>
+              );
+            })}
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Languages */}
+      <Reveal>
+        <div className="bento card-depth p-6 h-full">
+          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Languages</div>
+          <h3 className="mt-2 font-display text-xl text-white">Speaks 30 languages.</h3>
+          <div className="mt-4 grid grid-cols-6 gap-1.5">
+            {langs.map((f, i) => (
+              <div key={i} className="aspect-square rounded-md bg-white/[0.03] border border-white/5 flex items-center justify-center text-base">{f}</div>
+            ))}
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Wide: knowledge */}
+      <Reveal delay={0.05}>
+        <div className="bento card-depth md:col-span-2 p-6 md:p-7 h-full">
+          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Knowledge</div>
+          <h3 className="mt-2 font-display text-2xl text-white">Knows your business.</h3>
+          <p className="mt-2 text-sm text-white/60 max-w-md">Upload menus, FAQs, pricing. Ringly answers like a senior team member from day one.</p>
+          <div className="mt-5 rounded-lg border border-white/10 bg-[#0A0B0F] font-mono text-[12px] overflow-hidden">
+            <div className="px-3 py-1.5 border-b border-white/5 flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-[#F87171]/70" />
+              <span className="size-2 rounded-full bg-[#FBBF24]/70" />
+              <span className="size-2 rounded-full bg-[#4ADE80]/70" />
+              <span className="ml-2 text-white/40 text-[10px]">system.prompt</span>
+            </div>
+            <div className="px-4 py-3 leading-relaxed">
+              <span className="text-white/40">{"// persona"}</span><br/>
+              <span className="text-[#9D5BFF]">name</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"Ringly · Smile Dental"</span><br/>
+              <span className="text-[#9D5BFF]">tone</span> <span className="text-white/50">=</span> <span className="text-[#4ADE80]">"warm, concise, never pushy"</span><br/>
+              <span className="text-[#9D5BFF]">escalate_if</span> <span className="text-white/50">=</span> <span className="text-[#5B7FFF]">[</span>"emergency", "billing dispute"<span className="text-[#5B7FFF]">]</span>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Clock */}
+      <Reveal>
+        <div className="bento card-depth p-6 h-full flex flex-col">
+          <div className="text-[11px] uppercase tracking-wider text-[#5B7FFF] font-mono">Always on</div>
+          <h3 className="mt-2 font-display text-xl text-white">24 / 7.</h3>
+          <div className="mt-auto pt-4 flex items-center justify-center">
+            <div className="relative size-32">
+              <div className="absolute inset-0 rounded-full border border-white/10" />
+              <div className="absolute inset-2 rounded-full border border-white/5" />
+              {Array.from({ length: 12 }).map((_, i) => (
+                <span key={i} className="absolute left-1/2 top-1/2 w-px h-2 bg-white/20" style={{ transform: `translate(-50%,-50%) rotate(${i * 30}deg) translateY(-58px)` }} />
+              ))}
+              <Clock className="absolute inset-0 m-auto size-6 text-[#5B7FFF]" />
+              <div className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 60px -10px rgba(91,127,255,0.5)" }} />
+            </div>
+          </div>
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
+/* ----------------------- pricing ----------------------- */
+
+function Pricing() {
+  const [yearly, setYearly] = useState(false);
+  const tiers = [
+    { name: "Starter", price: 199, minutes: 500, feats: ["1 phone number", "Email transcripts", "Calendar sync", "Basic voices"] },
+    { name: "Pro", price: 499, minutes: 2000, feats: ["3 phone numbers", "CRM integrations", "Custom voice clone", "Priority support", "Workflow automations"], popular: true },
+    { name: "Scale", price: 1499, minutes: 8000, feats: ["Unlimited numbers", "API + webhooks", "Dedicated success manager", "99.99% SLA", "SSO + audit logs"] },
+  ];
+  return (
+    <div>
+      <div className="flex items-center justify-center mb-10">
+        <div className="relative flex items-center p-1 rounded-full border border-white/10 bg-white/[0.03]">
+          <motion.div
+            layout transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            className="absolute top-1 bottom-1 w-[88px] rounded-full btn-primary-glow"
+            style={{ left: yearly ? 92 : 4 }}
+          />
+          <button onClick={() => setYearly(false)} className={`relative z-10 w-[88px] py-1.5 text-[13px] font-medium ${!yearly ? "text-white" : "text-white/60"}`}>Monthly</button>
+          <button onClick={() => setYearly(true)} className={`relative z-10 w-[88px] py-1.5 text-[13px] font-medium ${yearly ? "text-white" : "text-white/60"}`}>Yearly</button>
+        </div>
+        <span className="ml-3 text-[11px] font-mono text-[#4ADE80]">save 20%</span>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto items-stretch">
+        {tiers.map(t => {
+          const price = yearly ? Math.round(t.price * 0.8) : t.price;
+          const Wrap = t.popular ? "div" : "div";
+          return (
+            <Wrap
+              key={t.name}
+              className={`relative ${t.popular ? "gradient-border md:scale-[1.04] md:-my-2 shadow-[0_0_60px_-15px_rgba(91,127,255,0.5)]" : "card-depth"} p-7 flex flex-col`}
+            >
+              {t.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full bg-gradient-to-r from-[#5B7FFF] to-[#9D5BFF] text-white shadow-[0_0_20px_-2px_rgba(91,127,255,0.7)]">
+                  Most popular
+                </div>
+              )}
+              <div className="text-sm font-medium text-white/80">{t.name}</div>
+              <div className="mt-4 flex items-baseline gap-1.5">
+                <span className="font-display text-5xl font-semibold text-white">${price}</span>
+                <span className="text-sm text-white/50">/mo</span>
+              </div>
+              <div className="mt-1 text-[12px] font-mono text-white/40">{t.minutes.toLocaleString()} minutes included</div>
+              <ul className="mt-6 space-y-3 flex-1">
+                {t.feats.map(f => (
+                  <li key={f} className="flex items-start gap-2.5 text-[13px] text-white/75">
+                    <div className="mt-0.5 size-4 shrink-0 rounded-full bg-[#5B7FFF]/15 border border-[#5B7FFF]/30 flex items-center justify-center">
+                      <Check className="size-2.5 text-[#7090FF]" strokeWidth={3} />
+                    </div>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/signup"
+                className={`mt-7 text-center text-sm font-medium py-2.5 rounded-lg transition ${
+                  t.popular ? "btn-primary-glow" : "btn-secondary-dark"
+                }`}
+              >
+                Get {t.name}
+              </Link>
+            </Wrap>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ----------------------- page ----------------------- */
+
+function Landing() {
+  const heroRef = useRef<HTMLElement | null>(null);
+  const onMove = (e: MouseEvent) => {
+    const el = heroRef.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  };
+
+  return (
+    <div className="dark min-h-screen bg-[#0A0B0F] text-white antialiased">
+      <Nav />
+
+      {/* ===== HERO ===== */}
+      <section ref={heroRef} onMouseMove={onMove} className="relative overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32">
+        <div className="absolute inset-0 bg-grid-brand [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
+        <div className="orb orb-blue" style={{ width: 600, height: 600, top: -180, right: -120 }} />
+        <div className="orb orb-violet" style={{ width: 460, height: 460, bottom: -160, left: -140 }} />
+        <div className="spotlight" />
+
+        <div className="relative max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
+          {/* left */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 text-[11px] font-mono px-2.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/70"
+            >
+              <span className="size-1.5 rounded-full bg-[#4ADE80] dot-pulse" />
+              Live — <CountUp to={2847} /> calls handled today
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
+              className="font-display font-semibold text-white mt-6"
+              style={{ fontSize: "clamp(48px, 7vw, 88px)", lineHeight: 1.02, letterSpacing: "-0.03em" }}
+            >
+              Your phone,<br/>
+              <span className="bg-gradient-to-r from-white via-white to-[#9D5BFF] bg-clip-text text-transparent">finally answered.</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}
+              className="mt-6 text-[17px] text-white/60 max-w-xl leading-relaxed"
+            >
+              Ringly picks up every call, books appointments, and never sleeps. Sound like you. Available in 30 seconds.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.22 }}
+              className="mt-8 flex flex-wrap items-center gap-3"
+            >
+              <MagneticButton
+                as={Link}
+                to="/signup"
+                className="group inline-flex items-center gap-2 btn-primary-glow px-5 py-3 rounded-lg text-[14px] font-medium"
+              >
+                Start free trial <ArrowRight className="cta-arrow size-4" />
+              </MagneticButton>
+              <MagneticButton
+                as={Link}
+                to="/dashboard"
+                className="inline-flex items-center gap-2 btn-secondary-dark px-5 py-3 rounded-lg text-[14px] font-medium"
+              >
+                <Play className="size-3.5 fill-current" /> Hear a demo call
+              </MagneticButton>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-12"
+            >
+              <div className="text-[11px] uppercase tracking-widest font-mono text-white/40">Trusted by 200+ businesses</div>
+              <div className="mt-4 flex items-center gap-8 flex-wrap opacity-60 grayscale">
+                {["Northwind","Acme","Lumen","Helio","Vertex","Pinecrest"].map(l => (
+                  <span key={l} className="font-display text-lg font-semibold text-white/70">{l}</span>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* right */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="relative"
+          >
+            <DemoCard />
+          </motion.div>
+        </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="border-t border-border bg-muted/20">
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold tracking-tight">Simple pricing</h2>
-            <p className="mt-2 text-muted-foreground">Start in 5 minutes. Cancel anytime.</p>
+      {/* ===== STATS STRIP ===== */}
+      <section className="relative border-y border-white/5 bg-[#0C0E14]">
+        <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+          {[
+            { label: "Calls answered", val: 1840293, suffix: "" },
+            { label: "Avg pickup", val: 1, suffix: "s" },
+            { label: "Languages", val: 30 },
+            { label: "Uptime", val: 99, suffix: ".99%" },
+          ].map(s => (
+            <div key={s.label}>
+              <div className="font-display text-3xl md:text-4xl font-semibold text-white">
+                <CountUp to={s.val} suffix={s.suffix ?? ""} />
+              </div>
+              <div className="mt-1 text-[12px] font-mono uppercase tracking-wider text-white/40">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== FEATURES BENTO ===== */}
+      <section id="features" className="relative py-24 md:py-32">
+        <div className="absolute inset-0 bg-grid-brand opacity-50 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)]" />
+        <div className="relative max-w-6xl mx-auto px-6">
+          <Reveal>
+            <div className="max-w-2xl">
+              <div className="text-[11px] uppercase tracking-widest font-mono text-[#5B7FFF]">Features</div>
+              <h2 className="mt-3 font-display text-4xl md:text-5xl font-semibold text-white tracking-tight" style={{ letterSpacing: "-0.025em" }}>
+                Everything a great receptionist does.<br/>
+                <span className="text-white/50">None of the sick days.</span>
+              </h2>
+            </div>
+          </Reveal>
+          <div className="mt-14">
+            <BentoCards />
           </div>
-          <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+        </div>
+      </section>
+
+      {/* ===== PRICING ===== */}
+      <section id="pricing" className="relative py-24 md:py-32 border-t border-white/5">
+        <div className="orb orb-blue" style={{ width: 500, height: 500, top: -100, left: "30%", opacity: 0.5 }} />
+        <div className="relative max-w-6xl mx-auto px-6">
+          <Reveal>
+            <div className="text-center mb-10">
+              <div className="text-[11px] uppercase tracking-widest font-mono text-[#5B7FFF]">Pricing</div>
+              <h2 className="mt-3 font-display text-4xl md:text-5xl font-semibold text-white" style={{ letterSpacing: "-0.025em" }}>
+                Pay for minutes, not seats.
+              </h2>
+              <p className="mt-3 text-white/60">Start in 5 minutes. Cancel anytime.</p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.05}><Pricing /></Reveal>
+        </div>
+      </section>
+
+      {/* ===== CTA ===== */}
+      <section className="relative py-24 border-t border-white/5">
+        <div className="orb orb-violet" style={{ width: 600, height: 400, bottom: -200, left: "50%", transform: "translateX(-50%)" }} />
+        <div className="relative max-w-3xl mx-auto px-6 text-center">
+          <Sparkles className="size-6 text-[#5B7FFF] mx-auto" />
+          <h2 className="mt-4 font-display text-4xl md:text-5xl font-semibold text-white" style={{ letterSpacing: "-0.025em" }}>
+            Ready in 30 seconds.
+          </h2>
+          <p className="mt-3 text-white/60">No credit card. Bring your number or pick a new one.</p>
+          <div className="mt-8 flex justify-center gap-3">
+            <MagneticButton as={Link} to="/signup" className="group inline-flex items-center gap-2 btn-primary-glow px-6 py-3 rounded-lg text-sm font-medium">
+              Start free trial <ArrowRight className="cta-arrow size-4" />
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== FOOTER ===== */}
+      <footer className="relative border-t border-white/5 bg-[#08090D]">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <div className="grid md:grid-cols-5 gap-10">
+            <div className="md:col-span-2">
+              <div className="font-display text-4xl font-semibold wordmark-grad">Ringly</div>
+              <p className="mt-3 text-sm text-white/50 max-w-xs">The AI receptionist that picks up every call, books every appointment, and never takes a break.</p>
+              <form className="mt-6 flex max-w-sm" onSubmit={e => e.preventDefault()}>
+                <input
+                  type="email" placeholder="you@company.com"
+                  className="flex-1 bg-white/[0.04] border border-white/10 rounded-l-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#5B7FFF]/50"
+                />
+                <button className="btn-primary-glow px-4 rounded-r-lg text-sm font-medium">Subscribe</button>
+              </form>
+            </div>
+
             {[
-              { name: "Starter", price: 199, minutes: 500, feats: ["1 phone number", "Email transcripts", "Calendar sync"] },
-              { name: "Pro", price: 499, minutes: 2000, feats: ["3 phone numbers", "CRM integrations", "Custom voice", "Priority support"], popular: true },
-              { name: "Scale", price: 1499, minutes: 8000, feats: ["Unlimited numbers", "API + webhooks", "Dedicated success", "SLA"] },
-            ].map(p => (
-              <div key={p.name} className={`relative p-6 rounded-xl bg-card border ${p.popular ? "border-primary" : "border-border"}`}>
-                {p.popular && <div className="absolute -top-2 left-6 text-[10px] font-semibold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded">Most popular</div>}
-                <div className="text-sm font-medium">{p.name}</div>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-mono text-4xl font-semibold">${p.price}</span>
-                  <span className="text-sm text-muted-foreground">/mo</span>
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground font-mono">{p.minutes} minutes included</div>
-                <ul className="mt-6 space-y-2.5">
-                  {p.feats.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <Check className="size-3.5 text-primary shrink-0" /> {f}
-                    </li>
+              { title: "Product", links: ["Features","Pricing","Changelog","Roadmap"] },
+              { title: "Company", links: ["About","Customers","Careers","Contact"] },
+              { title: "Resources", links: ["Docs","API","Guides","Support"] },
+            ].map(col => (
+              <div key={col.title}>
+                <div className="text-[11px] uppercase tracking-widest font-mono text-white/40">{col.title}</div>
+                <ul className="mt-4 space-y-2.5">
+                  {col.links.map(l => (
+                    <li key={l}><a href="#" className="text-sm text-white/70 hover:text-white transition">{l}</a></li>
                   ))}
                 </ul>
-                <Link to="/signup" className={`mt-6 block text-center text-sm font-medium py-2 rounded-md transition ${p.popular ? "bg-primary text-primary-foreground hover:opacity-90" : "border border-border hover:border-foreground/20"}`}>
-                  Get {p.name}
-                </Link>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      <footer className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-6 py-10 flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <div className="size-5 rounded bg-primary" />
-            <span>Ringly © 2026</span>
-          </div>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-foreground">Privacy</a>
-            <a href="#" className="hover:text-foreground">Terms</a>
-            <a href="#" className="hover:text-foreground">Status</a>
+          <div className="mt-14 pt-6 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-[12px] font-mono text-white/50">
+              <span className="size-1.5 rounded-full bg-[#4ADE80] dot-pulse" />
+              All systems operational
+            </div>
+            <div className="text-[12px] text-white/40">© 2026 Ringly Labs, Inc.</div>
+            <div className="flex items-center gap-3 text-white/40">
+              <a href="#" className="hover:text-white transition"><Twitter className="size-4" /></a>
+              <a href="#" className="hover:text-white transition"><Github className="size-4" /></a>
+              <a href="#" className="hover:text-white transition"><Linkedin className="size-4" /></a>
+            </div>
           </div>
         </div>
       </footer>
