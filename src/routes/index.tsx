@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
 import {
   ArrowRight, Check, Play, Clock, Sparkles,
-  Phone, MessageSquare, Twitter, Github, Linkedin,
+  Phone, Twitter, Github, Linkedin,
 } from "lucide-react";
 import { LiveWaveform } from "@/components/effects/Waveform";
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
