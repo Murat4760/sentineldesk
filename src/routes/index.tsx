@@ -39,10 +39,6 @@ function useCountUp(target: number, duration = 1400) {
   return { ref, value };
 }
 
-function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const { ref, value } = useCountUp(to);
-  return <span ref={ref} className="font-mono tabular-nums">{value.toLocaleString()}{suffix}</span>;
-}
 
 function MagneticButton({ children, className = "", as: As = "button", ...props }: any) {
   const ref = useRef<HTMLDivElement | null>(null);
