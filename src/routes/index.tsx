@@ -496,7 +496,7 @@ function Landing() {
 
       {/* ===== CTA ===== */}
       <section className="relative py-24 border-t border-white/5">
-        <div className="orb orb-violet" style={{ width: 600, height: 400, bottom: -200, left: "50%", transform: "translateX(-50%)" }} />
+        <div className="orb orb-blue" style={{ width: 520, height: 360, bottom: -180, left: "50%", transform: "translateX(-50%)", opacity: 0.6 }} />
         <div className="relative max-w-3xl mx-auto px-6 text-center">
           <Sparkles className="size-6 text-[#4F7AFF] mx-auto" />
           <h2 className="mt-4 font-display text-4xl md:text-5xl font-semibold text-white" style={{ letterSpacing: "-0.025em" }}>
@@ -516,7 +516,7 @@ function Landing() {
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid md:grid-cols-5 gap-10">
             <div className="md:col-span-2">
-              <div className="font-display text-4xl font-semibold wordmark-grad">Ringly</div>
+              <div className="font-display text-4xl font-semibold text-white">Ringly</div>
               <p className="mt-3 text-sm text-white/50 max-w-xs">The AI receptionist that picks up every call, books every appointment, and never takes a break.</p>
               <form className="mt-6 flex max-w-sm" onSubmit={e => e.preventDefault()}>
                 <input
