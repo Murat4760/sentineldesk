@@ -132,14 +132,13 @@ function DemoCard() {
       {/* phone card */}
       <div className="card-depth p-4 w-full max-w-[420px] mx-auto">
         <div className="flex items-center gap-3 px-2 py-2 border-b border-white/5">
-          <div className="size-9 rounded-full bg-gradient-to-br from-[#4F7AFF] to-[#4F7AFF] flex items-center justify-center text-white text-sm font-semibold">SJ</div>
+          <div className="size-9 rounded-full bg-[#4F7AFF]/20 border border-[#4F7AFF]/30 flex items-center justify-center text-white text-sm font-semibold">SJ</div>
           <div>
-            <div className="text-[13px] font-medium text-white">Sarah J.</div>
+            <div className="text-[13px] font-medium text-white">Sarah J. <span className="text-white/40 font-normal">· example</span></div>
             <div className="text-[11px] text-white/50 font-mono">Incoming call · {String(n * 4).padStart(2, "0")}s</div>
           </div>
-          <div className="ml-auto flex items-center gap-2">
-            <span className="size-2 rounded-full bg-[#4ADE80] dot-pulse" />
-            <span className="text-[10px] uppercase tracking-wider text-white/60">Live</span>
+          <div className="ml-auto">
+            <span className="text-[10px] uppercase tracking-wider text-white/50 font-mono">Demo conversation</span>
           </div>
         </div>
 
