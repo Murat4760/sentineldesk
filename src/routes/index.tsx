@@ -168,30 +168,20 @@ function DemoCard() {
         </div>
       </div>
 
-      {/* floating booked notification */}
+      {/* floating: try a demo call */}
       <motion.div
         initial={{ opacity: 0, y: 12, x: 20 }}
         animate={{ opacity: 1, y: 0, x: 0 }}
         transition={{ delay: 0.8, duration: 0.6 }}
         className="absolute -bottom-6 -right-2 sm:-right-6 card-depth px-3.5 py-3 flex items-center gap-2.5 w-[230px]"
       >
-        <div className="size-7 rounded-md bg-[#4ADE80]/15 border border-[#4ADE80]/30 flex items-center justify-center">
-          <Check className="size-3.5 text-[#4ADE80]" />
+        <div className="size-7 rounded-md bg-[#4F7AFF]/15 border border-[#4F7AFF]/30 flex items-center justify-center">
+          <Phone className="size-3.5 text-[#4F7AFF]" />
         </div>
         <div>
-          <div className="text-[12px] font-medium text-white">Appointment booked</div>
-          <div className="text-[11px] text-white/50 font-mono">Thu · 2:00 PM</div>
+          <div className="text-[12px] font-medium text-white">Try a demo call</div>
+          <div className="text-[11px] text-white/50 font-mono">Hear it yourself</div>
         </div>
-      </motion.div>
-
-      {/* secondary float */}
-      <motion.div
-        initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-        className="hidden md:flex absolute -top-4 -left-6 card-depth px-3 py-2 items-center gap-2"
-      >
-        <MessageSquare className="size-3.5 text-[#4F7AFF]" />
-        <span className="text-[11px] text-white/70">SMS confirmation sent</span>
       </motion.div>
     </div>
   );
