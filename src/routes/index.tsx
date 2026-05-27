@@ -93,7 +93,7 @@ function Nav() {
     <div className="fixed top-4 left-0 right-0 z-50 px-4">
       <nav className={`nav-pill ${scrolled ? "scrolled" : ""} mx-auto flex items-center justify-between gap-4 pl-3 pr-3 py-2 max-w-[720px]`}>
         <Link to="/" className="group flex items-center gap-2 pl-1">
-          <div className="size-7 rounded-lg bg-gradient-to-br from-[#6B8FFF] to-[#4F7AFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(79,122,255,0.6)] group-hover:scale-110 group-hover:shadow-[0_0_28px_-2px_rgba(79,122,255,0.8)] transition">R</div>
+          <div className="size-7 rounded-lg bg-[#4F7AFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(79,122,255,0.6)] group-hover:shadow-[0_0_28px_-2px_rgba(79,122,255,0.8)] transition">R</div>
           <span className="font-display text-[15px] font-semibold text-white">Ringly</span>
         </Link>
         <div className="hidden md:flex items-center gap-5 text-[13px] text-white/70">
