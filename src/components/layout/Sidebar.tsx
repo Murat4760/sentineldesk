@@ -7,19 +7,19 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 const NAV = [
-  { group: "Overview", items: [
-    { to: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-    { to: "/calls", label: "Calls", icon: PhoneCall },
-    { to: "/appointments", label: "Appointments", icon: Calendar },
+  { group: "Genel", items: [
+    { to: "/dashboard", label: "Panel", icon: LayoutGrid },
+    { to: "/calls", label: "Aramalar", icon: PhoneCall },
+    { to: "/appointments", label: "Randevular", icon: Calendar },
   ]},
-  { group: "Build", items: [
-    { to: "/agent", label: "Agent", icon: Bot },
-    { to: "/customers", label: "Customers", icon: Users },
+  { group: "Yapı", items: [
+    { to: "/agent", label: "Asistan", icon: Bot },
+    { to: "/customers", label: "Müşteriler", icon: Users },
   ]},
-  { group: "Account", items: [
-    { to: "/analytics", label: "Analytics", icon: BarChart3 },
-    { to: "/billing", label: "Billing", icon: CreditCard },
-    { to: "/settings", label: "Settings", icon: Settings },
+  { group: "Hesap", items: [
+    { to: "/analytics", label: "Analiz", icon: BarChart3 },
+    { to: "/billing", label: "Faturalama", icon: CreditCard },
+    { to: "/settings", label: "Ayarlar", icon: Settings },
   ]},
 ];
 
