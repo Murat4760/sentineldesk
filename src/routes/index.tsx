@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
   ArrowRight, Check, Play, Clock, Sparkles,
   Phone, Twitter, Github, Linkedin,
