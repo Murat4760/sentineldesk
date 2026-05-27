@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
 import {
-  ArrowRight, Check, Play, Calendar, Globe2, Clock, Sparkles,
+  ArrowRight, Check, Play, Clock, Sparkles,
   Phone, MessageSquare, Twitter, Github, Linkedin,
 } from "lucide-react";
 import { LiveWaveform } from "@/components/effects/Waveform";
