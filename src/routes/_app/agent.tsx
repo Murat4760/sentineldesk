@@ -177,13 +177,13 @@ function HoursTab() {
           <div></div>
           {hours.map(h => <div key={h} className="text-[9px] font-mono text-muted-foreground text-center py-1">{h}</div>)}
           {days.map((d, di) => (
-            <>
-              <div key={d} className="text-xs font-medium px-2 py-1 border-t border-border flex items-center">{d}</div>
-              {hours.map(h => {
+            <Fragment key={d}>
+              <div className="text-xs font-medium px-2 py-1 border-t border-border flex items-center">{d}</div>
+              {hours.map((_, h) => {
                 const k = `${di}-${h}`;
                 return <button key={k} onClick={() => toggle(k)} className={`border-t border-l border-border h-6 transition ${active.has(k) ? "bg-primary/40 hover:bg-primary/60" : "hover:bg-accent"}`} />;
               })}
-            </>
+            </Fragment>
           ))}
         </div>
       </div>
