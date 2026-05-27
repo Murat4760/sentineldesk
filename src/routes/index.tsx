@@ -395,17 +395,17 @@ function Landing() {
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 text-[11px] font-mono px-2.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/70"
             >
-              <span className="size-1.5 rounded-full bg-[#4ADE80] dot-pulse" />
-              Live — <CountUp to={2847} /> calls handled today
+              <span className="size-1.5 rounded-full bg-[#4F7AFF] dot-pulse" />
+              Now in early access
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
-              className="font-display font-semibold text-white mt-6"
+              className="font-display font-semibold text-[#F5F5F7] mt-6"
               style={{ fontSize: "clamp(48px, 7vw, 88px)", lineHeight: 1.02, letterSpacing: "-0.03em" }}
             >
               Your phone,<br/>
-              <span className="bg-gradient-to-r from-white via-white to-[#4F7AFF] bg-clip-text text-transparent">finally answered.</span>
+              finally answered.
             </motion.h1>
 
             <motion.p
@@ -437,14 +437,11 @@ function Landing() {
 
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-12"
+              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-white/55"
             >
-              <div className="text-[11px] uppercase tracking-widest font-mono text-white/40">Trusted by 200+ businesses</div>
-              <div className="mt-4 flex items-center gap-8 flex-wrap opacity-60 grayscale">
-                {["Northwind","Acme","Lumen","Helio","Vertex","Pinecrest"].map(l => (
-                  <span key={l} className="font-display text-lg font-semibold text-white/70">{l}</span>
-                ))}
-              </div>
+              <span className="inline-flex items-center gap-2"><Check className="size-3.5 text-[#4F7AFF]" /> Setup in 5 minutes</span>
+              <span className="inline-flex items-center gap-2"><Check className="size-3.5 text-[#4F7AFF]" /> No credit card required</span>
+              <span className="inline-flex items-center gap-2"><Check className="size-3.5 text-[#4F7AFF]" /> Cancel anytime</span>
             </motion.div>
           </div>
 
