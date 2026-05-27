@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, BarChart, Bar } from "recharts";
 import { callsPerDay, outcomeBreakdown, topicBreakdown } from "@/lib/mock-data";
@@ -94,21 +95,21 @@ function Card({ title, children, className = "" }: { title: string; children: Re
 
 function Heatmap() {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const hours = Array.from({ length: 24 });
+  const hours = Array.from({ length: 24 }, (_, i) => i);
   return (
     <div className="grid grid-cols-[40px_repeat(24,1fr)] gap-px">
       <div></div>
-      {hours.map(h => <div key={h} className="text-[9px] font-mono text-muted-foreground text-center">{h % 6 === 0 ? h : ""}</div>)}
+      {hours.map(h => <div key={`h-${h}`} className="text-[9px] font-mono text-muted-foreground text-center">{h % 6 === 0 ? h : ""}</div>)}
       {days.map((d, di) => (
-        <>
-          <div key={d} className="text-[10px] text-muted-foreground flex items-center">{d}</div>
+        <Fragment key={d}>
+          <div className="text-[10px] text-muted-foreground flex items-center">{d}</div>
           {hours.map(h => {
             const i = (Math.sin(di * 1.2 + h * 0.5) + 1) / 2;
             const peak = h >= 8 && h <= 18 ? 1 : 0.2;
             const val = i * peak;
-            return <div key={h} className="aspect-square rounded-sm" style={{ background: `color-mix(in oklch, var(--color-primary) ${val * 90}%, var(--color-muted))` }} title={`${d} ${h}:00 — ${Math.round(val * 30)} calls`} />;
+            return <div key={`${di}-${h}`} className="aspect-square rounded-sm" style={{ background: `color-mix(in oklch, var(--color-primary) ${val * 90}%, var(--color-muted))` }} title={`${d} ${h}:00 — ${Math.round(val * 30)} calls`} />;
           })}
-        </>
+        </Fragment>
       ))}
     </div>
   );
