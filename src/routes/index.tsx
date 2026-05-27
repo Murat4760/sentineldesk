@@ -455,24 +455,8 @@ function Landing() {
         </div>
       </section>
 
-      {/* ===== STATS STRIP ===== */}
-      <section className="relative border-y border-white/5 bg-[#0C0E14]">
-        <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { label: "Calls answered", val: 1840293, suffix: "" },
-            { label: "Avg pickup", val: 1, suffix: "s" },
-            { label: "Languages", val: 30 },
-            { label: "Uptime", val: 99, suffix: ".99%" },
-          ].map(s => (
-            <div key={s.label}>
-              <div className="font-display text-3xl md:text-4xl font-semibold text-white">
-                <CountUp to={s.val} suffix={s.suffix ?? ""} />
-              </div>
-              <div className="mt-1 text-[12px] font-mono uppercase tracking-wider text-white/40">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+
+
 
       {/* ===== FEATURES BENTO ===== */}
       <section id="features" className="relative py-24 md:py-32">
