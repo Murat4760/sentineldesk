@@ -27,12 +27,12 @@ export interface Call {
 }
 
 const names = [
-  "Sarah Johnson", "Michael Chen", "Emily Rodriguez", "David Park", "Jessica Williams",
-  "Brandon Miller", "Ashley Thompson", "Christopher Lee", "Amanda Garcia", "Tyler Brooks",
-  "Olivia Martinez", "Ethan Davis", "Sophia Wilson", "Jacob Anderson", "Isabella Moore",
-  "Ryan Taylor", "Mia Jackson", "Daniel White", "Ava Harris", "Matthew Clark",
-  "Charlotte Lewis", "Joshua Walker", "Amelia Young", "Andrew Hall", "Harper Allen",
-  "Nathan King", "Evelyn Wright", "Samuel Scott", "Abigail Green", "Benjamin Adams",
+  "Ayşe Yılmaz", "Mehmet Demir", "Zeynep Kaya", "Can Öztürk", "Elif Şahin",
+  "Murat Çelik", "Selin Aydın", "Burak Doğan", "Deniz Arslan", "Ece Polat",
+  "Emre Koç", "Gizem Erdoğan", "Kerem Yıldız", "Pınar Aksoy", "Tolga Güneş",
+  "Hülya Acar", "Onur Tekin", "Berna Aslan", "Serkan Yavuz", "Melis Bulut",
+  "Hakan Sönmez", "Ceren Eren", "Yusuf Bilgin", "Aslı Tunç", "Barış Korkmaz",
+  "Sevgi Çetin", "Furkan Aktaş", "Nazlı Özdemir", "Cem Uçar", "Defne Karaca",
 ];
 
 const outcomes: Outcome[] = ["booked", "booked", "booked", "info", "info", "missed", "voicemail", "transferred"];
@@ -40,46 +40,49 @@ const sentiments: Sentiment[] = ["positive", "positive", "positive", "neutral", 
 
 const sampleScripts = [
   [
-    { role: "ai", text: "Hi, thanks for calling Smile Dental. How can I help you today?", time: "00:00" },
-    { role: "caller", text: "Hi, I'd like to book a cleaning appointment.", time: "00:04" },
-    { role: "ai", text: "Of course! Are you a current patient with us?", time: "00:08" },
-    { role: "caller", text: "Yes, I've been there a couple of times.", time: "00:12" },
-    { role: "ai", text: "Great. Can I get your full name and date of birth?", time: "00:16" },
-    { role: "caller", text: "Sure, it's Sarah Johnson, March 14th 1989.", time: "00:22" },
-    { role: "ai", text: "Found you. We have openings Friday at 9am or Monday at 11am.", time: "00:30" },
-    { role: "caller", text: "Friday at 9 works perfectly.", time: "00:36" },
-    { role: "ai", text: "Booked. You'll get a text confirmation shortly. Anything else?", time: "00:42" },
-    { role: "caller", text: "No that's it, thank you!", time: "00:48" },
-    { role: "ai", text: "Have a wonderful day.", time: "00:51" },
+    { role: "ai", text: "Merhaba, Beyaz Diş Polikliniği'ne hoş geldiniz. Size nasıl yardımcı olabilirim?", time: "00:00" },
+    { role: "caller", text: "Merhaba, diş temizliği için randevu almak istiyorum.", time: "00:04" },
+    { role: "ai", text: "Tabii ki, daha önce kliniğimize geldiniz mi?", time: "00:08" },
+    { role: "caller", text: "Hayır, ilk defa arıyorum.", time: "00:12" },
+    { role: "ai", text: "Anladım. Hangi gün sizin için uygun olur?", time: "00:16" },
+    { role: "caller", text: "Perşembe öğleden sonra olabilir mi?", time: "00:22" },
+    { role: "ai", text: "Perşembe 14:00 ve 16:00 arası müsait. Hangisi sizin için iyi?", time: "00:30" },
+    { role: "caller", text: "15:00 olur.", time: "00:36" },
+    { role: "ai", text: "Harika. İsim ve telefon numaranızı alabilir miyim?", time: "00:42" },
+    { role: "caller", text: "Ayşe Yılmaz, 0532 555 0142.", time: "00:48" },
+    { role: "ai", text: "Teşekkürler Ayşe Hanım, randevunuz Perşembe 15:00 için onaylandı. SMS göndereceğim.", time: "00:54" },
   ],
   [
-    { role: "ai", text: "Thanks for calling Allbright HVAC. What can I do for you?", time: "00:00" },
-    { role: "caller", text: "My AC stopped cooling last night.", time: "00:04" },
-    { role: "ai", text: "Sorry to hear that. Is the unit running but not cooling, or not running at all?", time: "00:09" },
-    { role: "caller", text: "It's running but blowing warm air.", time: "00:15" },
-    { role: "ai", text: "Got it. We can dispatch a technician today between 2pm and 5pm.", time: "00:22" },
-    { role: "caller", text: "Perfect, please send someone.", time: "00:28" },
-    { role: "ai", text: "Confirmed. The trip fee is $89 and applies to repairs if approved.", time: "00:34" },
-    { role: "caller", text: "Understood. Thanks.", time: "00:40" },
+    { role: "ai", text: "Anadolu Klima Servis, iyi günler. Size nasıl yardımcı olabilirim?", time: "00:00" },
+    { role: "caller", text: "Klimam soğutmuyor, dün geceden beri böyle.", time: "00:04" },
+    { role: "ai", text: "Çalışıyor ama sıcak hava mı üflüyor, yoksa hiç açılmıyor mu?", time: "00:09" },
+    { role: "caller", text: "Çalışıyor ama soğutmuyor.", time: "00:15" },
+    { role: "ai", text: "Anladım. Bugün 14:00 ile 17:00 arası teknisyen gönderebiliriz.", time: "00:22" },
+    { role: "caller", text: "Tamam, lütfen birini gönderin. Adresim Beylikdüzü.", time: "00:28" },
+    { role: "ai", text: "Onaylandı. Servis ücreti 450 TL, onarım onaylanırsa düşülür.", time: "00:34" },
+    { role: "caller", text: "Anlaşıldı, teşekkürler.", time: "00:40" },
   ],
   [
-    { role: "ai", text: "Hi, this is Ringly for Beverly Salon. How can I help?", time: "00:00" },
-    { role: "caller", text: "Do you have a slot for highlights this Saturday?", time: "00:05" },
-    { role: "ai", text: "Let me check. We have 10:30am with Tasha or 3pm with Maria.", time: "00:12" },
-    { role: "caller", text: "10:30 with Tasha.", time: "00:18" },
-    { role: "ai", text: "Booked. Heads up — highlights take about 2.5 hours.", time: "00:24" },
-    { role: "caller", text: "Got it, thanks!", time: "00:30" },
+    { role: "ai", text: "Patiland Veteriner, merhaba. Nasıl yardımcı olabilirim?", time: "00:00" },
+    { role: "caller", text: "Cumartesi kedim için aşı randevusu var mı?", time: "00:05" },
+    { role: "ai", text: "Cumartesi 10:30 ve 15:00 müsait.", time: "00:12" },
+    { role: "caller", text: "10:30 mükemmel.", time: "00:18" },
+    { role: "ai", text: "Onaylandı. Kedinizin ismini ve cinsini alabilir miyim?", time: "00:24" },
+    { role: "caller", text: "Pamuk, British Shorthair.", time: "00:30" },
+    { role: "ai", text: "Kaydettim. Cumartesi 10:30'da görüşürüz.", time: "00:36" },
   ],
 ];
 
-const services = ["Teeth cleaning", "AC repair", "Highlights", "Consultation", "Inspection", "Tune-up"];
-const intents = ["book_appointment", "request_info", "reschedule", "billing_question", "emergency"];
+const services = ["Diş temizliği", "Klima bakımı", "Aşı", "Konsültasyon", "Muayene", "Rezervasyon"];
+const intents = ["randevu_al", "bilgi_al", "ertele", "fatura_sorusu", "acil"];
 
 function pad(n: number) { return n < 10 ? `0${n}` : `${n}`; }
 function phone(i: number) {
-  const a = 200 + (i * 37) % 700;
-  const b = 1000 + (i * 113) % 9000;
-  return `+1 (415) 555-${pad(a % 100)}${pad(b % 100)}`.slice(0, 17);
+  const prefixes = ["532", "533", "535", "537", "538", "541", "544", "545"];
+  const p = prefixes[i % prefixes.length];
+  const mid = String(100 + (i * 37) % 900);
+  const tail = String(1000 + (i * 113) % 9000);
+  return `+90 ${p} ${mid} ${tail.slice(0, 4)}`;
 }
 
 export const mockCalls: Call[] = Array.from({ length: 34 }).map((_, i) => {
@@ -100,9 +103,9 @@ export const mockCalls: Call[] = Array.from({ length: 34 }).map((_, i) => {
       intent: intents[i % intents.length],
       service: services[i % services.length],
       preferredDate: new Date(Date.now() + (i % 7) * 86400000).toISOString().slice(0, 10),
-      preferredTime: ["Morning", "Afternoon", "Evening"][i % 3],
+      preferredTime: ["Sabah", "Öğleden sonra", "Akşam"][i % 3],
       isNewPatient: i % 2 === 0,
-      notes: i % 3 === 0 ? "Prefers Dr. Chen" : i % 3 === 1 ? "Allergic to latex" : "Repeat customer",
+      notes: i % 3 === 0 ? "Dr. Kaya'yı tercih ediyor" : i % 3 === 1 ? "Lateks alerjisi var" : "Sadık müşteri",
     },
   };
 });
@@ -143,43 +146,49 @@ export interface Customer {
   lifetimeValue: number;
 }
 
+const slugify = (s: string) => s
+  .toLowerCase()
+  .replace(/ı/g, "i").replace(/ş/g, "s").replace(/ç/g, "c")
+  .replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o")
+  .replace(/\s+/g, ".");
+
 export const mockCustomers: Customer[] = Array.from({ length: 18 }).map((_, i) => ({
   id: `cust_${i + 1}`,
   name: names[i % names.length],
   phone: phone(i + 7),
-  email: names[i % names.length].toLowerCase().replace(" ", ".") + "@example.com",
+  email: slugify(names[i % names.length]) + "@ornek.com",
   totalCalls: 1 + (i * 3) % 12,
   lastContact: new Date(Date.now() - (i * 86400000)).toISOString(),
-  tags: [["vip", "repeat"], ["new"], ["repeat"], ["follow-up"], ["vip"]][i % 5],
-  lifetimeValue: 200 + ((i * 187) % 4800),
+  tags: [["vip", "sadık"], ["yeni"], ["sadık"], ["takip"], ["vip"]][i % 5],
+  lifetimeValue: 800 + ((i * 187) % 14800),
 }));
 
 export const voices = [
-  { id: "ava", name: "Ava", traits: "Warm, professional", accent: "American" },
-  { id: "mason", name: "Mason", traits: "Calm, confident", accent: "American" },
-  { id: "luna", name: "Luna", traits: "Friendly, upbeat", accent: "American" },
-  { id: "oliver", name: "Oliver", traits: "Polished, articulate", accent: "British" },
-  { id: "zoe", name: "Zoe", traits: "Bright, energetic", accent: "American" },
-  { id: "kai", name: "Kai", traits: "Smooth, reassuring", accent: "Australian" },
+  { id: "zeynep", name: "Zeynep", traits: "Sıcak, profesyonel", accent: "Türkçe" },
+  { id: "mehmet", name: "Mehmet", traits: "Güvenli, samimi", accent: "Türkçe" },
+  { id: "elif", name: "Elif", traits: "Genç, enerjik", accent: "Türkçe" },
+  { id: "can", name: "Can", traits: "Sakin, dengeli", accent: "Türkçe" },
+  { id: "selin", name: "Selin", traits: "Kibar, kurumsal", accent: "Türkçe" },
+  { id: "kerem", name: "Kerem", traits: "Net, güven veren", accent: "Türkçe" },
 ];
 
 export const callsPerDay = Array.from({ length: 14 }).map((_, i) => ({
-  day: new Date(Date.now() - (13 - i) * 86400000).toLocaleDateString("en", { month: "short", day: "numeric" }),
+  day: new Date(Date.now() - (13 - i) * 86400000).toLocaleDateString("tr-TR", { month: "short", day: "numeric" }),
   calls: 20 + Math.round(Math.sin(i / 2) * 12) + (i * 2),
 }));
 
 export const outcomeBreakdown = [
-  { name: "Booked", value: 142, color: "var(--color-success)" },
-  { name: "Info", value: 87, color: "var(--color-primary)" },
-  { name: "Voicemail", value: 31, color: "var(--color-muted-foreground)" },
-  { name: "Missed", value: 14, color: "var(--color-destructive)" },
+  { name: "Randevu", value: 142, color: "var(--color-success)" },
+  { name: "Bilgi", value: 87, color: "var(--color-primary)" },
+  { name: "Sesli mesaj", value: 31, color: "var(--color-muted-foreground)" },
+  { name: "Kaçırılan", value: 14, color: "var(--color-destructive)" },
 ];
 
 export const topicBreakdown = [
-  { topic: "Appointment booking", count: 142 },
-  { topic: "Pricing inquiry", count: 64 },
-  { topic: "Hours & location", count: 41 },
-  { topic: "Reschedule", count: 28 },
-  { topic: "Billing question", count: 19 },
-  { topic: "Other", count: 12 },
+  { topic: "Randevu alma", count: 142 },
+  { topic: "Fiyat sorgusu", count: 64 },
+  { topic: "Saatler ve konum", count: 41 },
+  { topic: "Erteleme", count: 28 },
+  { topic: "Fatura sorusu", count: 19 },
+  { topic: "Diğer", count: 12 },
 ];
