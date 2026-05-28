@@ -69,8 +69,6 @@ function Settings() {
                   <button onClick={copyWebhook} className="px-3 h-10 border border-border rounded-md text-xs hover:bg-accent">Kopyala</button>
                 </div>
               </div>
-              <Field label="Vapi API Key" defaultValue="" mono />
-              <input type="hidden" value={vapiKey} onChange={(e) => setVapiKey(e.target.value)} />
               <div>
                 <label className="text-xs font-medium">Vapi API Key</label>
                 <input
