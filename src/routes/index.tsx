@@ -158,17 +158,23 @@ function VoicePicker() {
   const [selected, setSelected] = useState("zeynep");
   const [playing, setPlaying] = useState<string | null>(null);
 
-  const play = (v: typeof VOICES[number]) => {
+  const handlePick = (v: typeof VOICES[number]) => {
+    setSelected(v.id);
+    // Toggle: clicking the currently playing voice stops it.
     if (playing === v.id) {
       stopSpeech();
       setPlaying(null);
       return;
     }
+    // speak() cancels any in-flight utterance, guaranteeing one at a time.
     const u = speak(`Merhaba, ben ${v.name}. Size nasıl yardımcı olabilirim?`, {
       voiceIdx: v.voiceIdx, pitch: v.pitch, rate: 0.95,
     });
     setPlaying(v.id);
-    if (u) u.onend = () => setPlaying(p => (p === v.id ? null : p));
+    if (u) {
+      u.onend = () => setPlaying(p => (p === v.id ? null : p));
+      u.onerror = () => setPlaying(p => (p === v.id ? null : p));
+    }
   };
 
   useEffect(() => () => stopSpeech(), []);
@@ -179,22 +185,31 @@ function VoicePicker() {
         const isSel = selected === v.id;
         const isPlaying = playing === v.id;
         return (
-          <button
+          <div
             key={v.id}
-            onClick={() => setSelected(v.id)}
-            className={`group text-left card-depth p-4 transition ${isSel ? "ring-1 ring-[#4F7AFF]/60 shadow-[0_0_30px_-10px_rgba(79,122,255,0.6)]" : "hover:border-white/20"}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => handlePick(v)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handlePick(v);
+              }
+            }}
+            aria-pressed={isSel}
+            aria-label={`${v.name} sesini ${isPlaying ? "durdur" : "dinle"}`}
+            className={`group text-left card-depth p-4 transition cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-[#4F7AFF]/60 ${isSel ? "ring-1 ring-[#4F7AFF]/60 shadow-[0_0_30px_-10px_rgba(79,122,255,0.6)]" : "hover:border-white/20"}`}
           >
             <div className="flex items-center justify-between">
               <div className="size-10 rounded-full bg-[#4F7AFF]/15 border border-[#4F7AFF]/30 flex items-center justify-center text-white text-sm font-semibold">
                 {v.name[0]}
               </div>
-              <button
-                onClick={(e) => { e.stopPropagation(); play(v); }}
-                className={`size-8 rounded-full flex items-center justify-center transition ${isPlaying ? "bg-[#4F7AFF] text-white" : "bg-white/5 hover:bg-white/10 text-white/70"}`}
-                aria-label={isPlaying ? "Durdur" : "Dinle"}
+              <span
+                className={`size-8 rounded-full flex items-center justify-center transition ${isPlaying ? "bg-[#4F7AFF] text-white" : "bg-white/5 group-hover:bg-white/10 text-white/70"}`}
+                aria-hidden="true"
               >
                 {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5 ml-0.5" />}
-              </button>
+              </span>
             </div>
             <div className="mt-3 text-[14px] font-medium text-white">{v.name}</div>
             <div className="mt-2 flex flex-wrap gap-1">
@@ -214,10 +229,11 @@ function VoicePicker() {
                 />
               ))}
             </div>
-          </button>
+          </div>
         );
       })}
     </div>
+
   );
 }
 
