@@ -8,7 +8,7 @@ export const Route = createFileRoute("/login")({
 });
 
 function Login() {
-  return <AuthLayout title="Welcome back" sub="Sign in to your Ringly dashboard" cta="Sign in" alt={["No account?", "Create one", "/signup"]} />;
+  return <AuthLayout title="Welcome back" sub="Sign in to your Sentinel dashboard" cta="Sign in" alt={["No account?", "Create one", "/signup"]} />;
 }
 
 export function AuthLayout({ title, sub, cta, alt }: { title: string; sub: string; cta: string; alt: [string, string, string] }) {
@@ -17,7 +17,7 @@ export function AuthLayout({ title, sub, cta, alt }: { title: string; sub: strin
       <div className="flex flex-col p-8 md:p-12">
         <Link to="/" className="flex items-center gap-2 font-semibold">
           <div className="size-6 rounded-md bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">R</div>
-          Ringly
+          Sentinel
         </Link>
         <motion.div
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}

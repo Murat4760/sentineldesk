@@ -37,7 +37,7 @@ function Onboarding() {
   const runProvisioning = () => {
     setProvisioning(true);
     const lines = [
-      "$ ringly provision --area=415",
+      "$ sentinel provision --area=415",
       "→ Reserving phone number…",
       "→ Configuring carrier routes…",
       "→ Linking agent persona…",
@@ -58,7 +58,7 @@ function Onboarding() {
       <div className="border-b border-border h-14 px-6 flex items-center">
         <div className="flex items-center gap-2 font-semibold">
           <div className="size-6 rounded-md bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">R</div>
-          Ringly
+          Sentinel
         </div>
         <div className="ml-auto text-xs text-muted-foreground font-mono">Step {step + 1} of {steps.length}</div>
       </div>
