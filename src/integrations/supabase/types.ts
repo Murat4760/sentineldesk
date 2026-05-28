@@ -23,6 +23,7 @@ export type Database = {
           customer_phone: string
           id: string
           notes: string | null
+          owner_id: string | null
           service: string | null
           status: string
           updated_at: string
@@ -35,6 +36,7 @@ export type Database = {
           customer_phone: string
           id?: string
           notes?: string | null
+          owner_id?: string | null
           service?: string | null
           status?: string
           updated_at?: string
@@ -47,6 +49,7 @@ export type Database = {
           customer_phone?: string
           id?: string
           notes?: string | null
+          owner_id?: string | null
           service?: string | null
           status?: string
           updated_at?: string
@@ -71,6 +74,7 @@ export type Database = {
           extracted_data: Json
           id: string
           outcome: string | null
+          owner_id: string | null
           sentiment: string | null
           started_at: string | null
           transcript: Json
@@ -85,6 +89,7 @@ export type Database = {
           extracted_data?: Json
           id?: string
           outcome?: string | null
+          owner_id?: string | null
           sentiment?: string | null
           started_at?: string | null
           transcript?: Json
@@ -99,6 +104,7 @@ export type Database = {
           extracted_data?: Json
           id?: string
           outcome?: string | null
+          owner_id?: string | null
           sentiment?: string | null
           started_at?: string | null
           transcript?: Json
@@ -121,6 +127,7 @@ export type Database = {
           id: string
           last_call_at: string | null
           name: string | null
+          owner_id: string | null
           phone: string
           tags: string[]
           total_calls: number
@@ -132,6 +139,7 @@ export type Database = {
           id?: string
           last_call_at?: string | null
           name?: string | null
+          owner_id?: string | null
           phone: string
           tags?: string[]
           total_calls?: number
@@ -143,6 +151,7 @@ export type Database = {
           id?: string
           last_call_at?: string | null
           name?: string | null
+          owner_id?: string | null
           phone?: string
           tags?: string[]
           total_calls?: number
