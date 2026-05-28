@@ -14,7 +14,142 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_datetime: string
+          created_at: string
+          customer_id: string | null
+          customer_name: string | null
+          customer_phone: string
+          id: string
+          notes: string | null
+          service: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_datetime: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          customer_phone: string
+          id?: string
+          notes?: string | null
+          service?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_datetime?: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          customer_phone?: string
+          id?: string
+          notes?: string | null
+          service?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calls: {
+        Row: {
+          caller_name: string | null
+          caller_phone: string
+          created_at: string
+          customer_id: string | null
+          duration: number
+          extracted_data: Json
+          id: string
+          outcome: string | null
+          sentiment: string | null
+          started_at: string | null
+          transcript: Json
+          vapi_call_id: string | null
+        }
+        Insert: {
+          caller_name?: string | null
+          caller_phone: string
+          created_at?: string
+          customer_id?: string | null
+          duration?: number
+          extracted_data?: Json
+          id?: string
+          outcome?: string | null
+          sentiment?: string | null
+          started_at?: string | null
+          transcript?: Json
+          vapi_call_id?: string | null
+        }
+        Update: {
+          caller_name?: string | null
+          caller_phone?: string
+          created_at?: string
+          customer_id?: string | null
+          duration?: number
+          extracted_data?: Json
+          id?: string
+          outcome?: string | null
+          sentiment?: string | null
+          started_at?: string | null
+          transcript?: Json
+          vapi_call_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          last_call_at: string | null
+          name: string | null
+          phone: string
+          tags: string[]
+          total_calls: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_call_at?: string | null
+          name?: string | null
+          phone: string
+          tags?: string[]
+          total_calls?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_call_at?: string | null
+          name?: string | null
+          phone?: string
+          tags?: string[]
+          total_calls?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
