@@ -33,7 +33,7 @@ export function Sidebar() {
     >
       <div className="h-14 px-4 flex items-center justify-between border-b border-border">
         <Link to="/" className="flex items-center gap-2 font-semibold">
-          <div className="size-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">R</div>
+          <div className="size-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">S</div>
           {!collapsed && <span className="tracking-tight">Sentinel</span>}
         </Link>
       </div>
