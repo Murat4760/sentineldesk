@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const KEY = "ringly-theme";
+const KEY = "sentinel-theme";
 
 export function useTheme() {
   const [theme, setTheme] = useState<"light" | "dark">(() => {

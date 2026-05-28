@@ -10,8 +10,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ringly — Telefonunuz artık her zaman açık." },
-      { name: "description", content: "Ringly her aramaya cevap verir, randevu alır, asla uyumaz. Sizin gibi konuşur. 5 dakikada kurulur." },
+      { title: "Sentinel — Telefonunuz artık her zaman açık." },
+      { name: "description", content: "Sentinel her aramaya cevap verir, randevu alır, asla uyumaz. Sizin gibi konuşur. 5 dakikada kurulur." },
     ],
   }),
   component: Landing,
@@ -66,7 +66,7 @@ function Nav({ onTrial }: { onTrial: () => void }) {
       <nav className={`nav-pill ${scrolled ? "scrolled" : ""} mx-auto flex items-center justify-between gap-4 pl-3 pr-3 py-2 max-w-[760px]`}>
         <Link to="/" className="group flex items-center gap-2 pl-1">
           <div className="size-7 rounded-lg bg-[#4F7AFF] flex items-center justify-center text-white text-xs font-bold shadow-[0_0_20px_-4px_rgba(79,122,255,0.6)]">R</div>
-          <span className="font-display text-[15px] font-semibold text-white">Ringly</span>
+          <span className="font-display text-[15px] font-semibold text-white">Sentinel</span>
         </Link>
         <div className="hidden md:flex items-center gap-5 text-[13px] text-white/70">
           <a href="#features" className="hover:text-white transition">Özellikler</a>
@@ -339,7 +339,7 @@ function LiveDemo() {
         </button>
         <div>
           <div className="text-[15px] font-medium text-white">{current.business}</div>
-          <div className="text-[12px] text-white/50 font-mono">Ringly demo · Türkçe</div>
+          <div className="text-[12px] text-white/50 font-mono">Sentinel demo · Türkçe</div>
         </div>
         {playing && <LiveWaveform bars={20} className="ml-auto h-6" />}
       </div>
@@ -364,7 +364,7 @@ function LiveDemo() {
       </div>
 
       <div className="mt-5 text-[11px] font-mono text-white/40">
-        Bu konuşma bir Ringly demosudur. Ses, tarayıcı sentezi ile oynatılır.
+        Bu konuşma bir Sentinel demosudur. Ses, tarayıcı sentezi ile oynatılır.
       </div>
     </div>
   );
@@ -417,7 +417,7 @@ function BentoCards() {
         <div className="bento card-depth p-6 h-full">
           <div className="text-[11px] uppercase tracking-wider text-[#4F7AFF] font-mono">Bilgi</div>
           <h3 className="mt-2 font-display text-xl text-white">İşinizi öğrenir.</h3>
-          <p className="mt-3 text-sm text-white/60">Menünüzü, fiyatlarınızı, SSS'lerinizi yükleyin. Ringly ilk günden ekibinizdenmiş gibi cevap verir.</p>
+          <p className="mt-3 text-sm text-white/60">Menünüzü, fiyatlarınızı, SSS'lerinizi yükleyin. Sentinel ilk günden ekibinizdenmiş gibi cevap verir.</p>
           <div className="mt-4 space-y-1.5">
             {["Fiyat listesi", "Çalışma saatleri", "Hizmet kataloğu"].map(s => (
               <div key={s} className="flex items-center gap-2 text-[12px] text-white/70">
@@ -659,7 +659,7 @@ function TrialModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             {!submitted ? (
               <>
                 <h3 className="font-display text-2xl text-white">Sizi 30 saniyede arayalım</h3>
-                <p className="text-[13px] text-white/60 mt-1">Numaranızı bırakın, Ringly sizi arasın. Hiçbir kart bilgisi gerekmez.</p>
+                <p className="text-[13px] text-white/60 mt-1">Numaranızı bırakın, Sentinel sizi arasın. Hiçbir kart bilgisi gerekmez.</p>
                 <form onSubmit={submit} className="mt-5 space-y-3">
                   <div>
                     <label className="text-[12px] text-white/60 font-mono">Telefon numarası</label>
@@ -747,7 +747,7 @@ function Landing() {
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}
               className="mt-6 text-[17px] text-white/60 max-w-xl leading-relaxed"
             >
-              Ringly her aramaya cevap verir, randevu alır, asla uyumaz. Sizin gibi konuşur. 5 dakikada kurulur.
+              Sentinel her aramaya cevap verir, randevu alır, asla uyumaz. Sizin gibi konuşur. 5 dakikada kurulur.
             </motion.p>
 
             <motion.div
@@ -849,7 +849,7 @@ function Landing() {
                 Önce duyun, sonra karar verin.
               </h2>
               <p className="mt-4 text-white/60 leading-relaxed">
-                Sektörünüzü seçin, gerçek bir Ringly konuşmasını dinleyin. Her senaryo
+                Sektörünüzü seçin, gerçek bir Sentinel konuşmasını dinleyin. Her senaryo
                 farklı bir karakter ve ton. Sizin sektörünüzde nasıl konuştuğunu görün.
               </p>
               <button
@@ -906,7 +906,7 @@ function Landing() {
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid md:grid-cols-5 gap-10">
             <div className="md:col-span-2">
-              <div className="font-display text-4xl font-semibold text-white">Ringly</div>
+              <div className="font-display text-4xl font-semibold text-white">Sentinel</div>
               <p className="mt-3 text-sm text-white/50 max-w-xs">Her aramaya cevap veren, her randevuyu alan ve asla mola vermeyen AI resepsiyonist.</p>
               <form className="mt-6 flex max-w-sm" onSubmit={e => e.preventDefault()}>
                 <input
@@ -938,7 +938,7 @@ function Landing() {
               <span className="size-1.5 rounded-full bg-[#4ADE80] dot-pulse" />
               Tüm sistemler çalışıyor
             </div>
-            <div className="text-[12px] text-white/40">© 2026 Ringly · İstanbul</div>
+            <div className="text-[12px] text-white/40">© 2026 Sentinel · İstanbul</div>
             <div className="flex items-center gap-3 text-white/40">
               <a href="#" className="hover:text-white transition"><Twitter className="size-4" /></a>
               <a href="#" className="hover:text-white transition"><Github className="size-4" /></a>
