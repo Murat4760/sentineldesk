@@ -14,6 +14,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiVapiWebhookRouteImport } from './routes/api/vapi-webhook'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppCustomersRouteImport } from './routes/_app/customers'
@@ -46,6 +47,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVapiWebhookRoute = ApiVapiWebhookRouteImport.update({
+  id: '/api/vapi-webhook',
+  path: '/api/vapi-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/customers': typeof AppCustomersRoute
   '/dashboard': typeof AppDashboardRoute
   '/settings': typeof AppSettingsRoute
+  '/api/vapi-webhook': typeof ApiVapiWebhookRoute
   '/calls/$id': typeof AppCallsIdRoute
   '/calls/': typeof AppCallsIndexRoute
 }
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/customers': typeof AppCustomersRoute
   '/dashboard': typeof AppDashboardRoute
   '/settings': typeof AppSettingsRoute
+  '/api/vapi-webhook': typeof ApiVapiWebhookRoute
   '/calls/$id': typeof AppCallsIdRoute
   '/calls': typeof AppCallsIndexRoute
 }
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/_app/customers': typeof AppCustomersRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/api/vapi-webhook': typeof ApiVapiWebhookRoute
   '/_app/calls/$id': typeof AppCallsIdRoute
   '/_app/calls/': typeof AppCallsIndexRoute
 }
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/dashboard'
     | '/settings'
+    | '/api/vapi-webhook'
     | '/calls/$id'
     | '/calls/'
   fileRoutesByTo: FileRoutesByTo
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/dashboard'
     | '/settings'
+    | '/api/vapi-webhook'
     | '/calls/$id'
     | '/calls'
   id:
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/_app/customers'
     | '/_app/dashboard'
     | '/_app/settings'
+    | '/api/vapi-webhook'
     | '/_app/calls/$id'
     | '/_app/calls/'
   fileRoutesById: FileRoutesById
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   SignupRoute: typeof SignupRoute
+  ApiVapiWebhookRoute: typeof ApiVapiWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -233,6 +246,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/vapi-webhook': {
+      id: '/api/vapi-webhook'
+      path: '/api/vapi-webhook'
+      fullPath: '/api/vapi-webhook'
+      preLoaderRoute: typeof ApiVapiWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/settings': {
@@ -333,6 +353,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   SignupRoute: SignupRoute,
+  ApiVapiWebhookRoute: ApiVapiWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
