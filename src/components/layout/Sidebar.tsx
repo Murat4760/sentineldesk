@@ -35,7 +35,7 @@ export function Sidebar() {
         <Link to="/" className="flex items-center gap-2 font-semibold">
           <div className="size-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">R</div>
           {!collapsed && <span className="tracking-tight">Sentinel</span>}
-        </Link>
+          <div className="size-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">S</div>
       </div>
       <nav className="flex-1 overflow-y-auto py-3">
         {NAV.map((group, gi) => (
