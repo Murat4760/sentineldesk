@@ -1,15 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/settings")({
   component: Settings,
 });
 
-const TABS = ["Profile", "Team", "Notifications", "Integrations", "Danger zone"] as const;
+const TABS = ["Profile", "Vapi", "Team", "Notifications", "Integrations", "Danger zone"] as const;
 
 function Settings() {
   const [tab, setTab] = useState<typeof TABS[number]>("Profile");
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [vapiKey, setVapiKey] = useState("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setWebhookUrl(localStorage.getItem("vapi.webhookUrl") ?? `${window.location.origin}/api/vapi-webhook`);
+    setVapiKey(localStorage.getItem("vapi.apiKey") ?? "");
+  }, []);
+
+  const saveVapi = () => {
+    localStorage.setItem("vapi.webhookUrl", webhookUrl);
+    localStorage.setItem("vapi.apiKey", vapiKey);
+    toast.success("Vapi ayarları kaydedildi");
+  };
+  const copyWebhook = async () => {
+    await navigator.clipboard.writeText(webhookUrl);
+    toast.success("Webhook URL kopyalandı");
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-semibold tracking-tight mb-6">Settings</h1>
@@ -28,6 +47,39 @@ function Settings() {
               <Field label="Email" defaultValue="marcus@webbplumbing.com" />
               <Field label="Phone" defaultValue="+1 (415) 555-0142" mono />
               <button onClick={() => toast.success("Profile saved")} className="mt-2 bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:opacity-90">Save changes</button>
+            </div>
+          )}
+          {tab === "Vapi" && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-sm font-semibold">Vapi Webhook</h2>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Bu URL'yi Vapi dashboard → Assistant → Server URL alanına yapıştırın. Vapi her arama bittiğinde end-of-call-report'u buraya POST edecek.
+                </p>
+              </div>
+              <div>
+                <label className="text-xs font-medium">Webhook URL</label>
+                <div className="mt-1 flex gap-2">
+                  <input
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    placeholder="https://your-app.lovable.app/api/vapi-webhook"
+                    className="flex-1 h-10 px-3 rounded-md border border-input bg-background text-sm font-mono outline-none focus:border-primary"
+                  />
+                  <button onClick={copyWebhook} className="px-3 h-10 border border-border rounded-md text-xs hover:bg-accent">Kopyala</button>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium">Vapi API Key</label>
+                <input
+                  value={vapiKey}
+                  onChange={(e) => setVapiKey(e.target.value)}
+                  placeholder="vapi_..."
+                  className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm font-mono outline-none focus:border-primary"
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">Yalnızca tarayıcıda saklanır. Production için backend secret'a taşıyın.</p>
+              </div>
+              <button onClick={saveVapi} className="bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:opacity-90">Kaydet</button>
             </div>
           )}
           {tab === "Team" && (
