@@ -154,6 +154,8 @@ export const Route = createFileRoute("/api/vapi-webhook")({
             extracted_data: extracted,
             vapi_call_id: call.id,
             customer_id: customer?.id,
+            owner_id: ownerId,
+
           });
           if (callErr) {
             console.error("[vapi-webhook] call insert error:", callErr);
