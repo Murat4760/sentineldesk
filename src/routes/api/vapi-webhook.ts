@@ -1,41 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 // Vapi webhook endpoint: POST /api/vapi-webhook
 // Vapi POSTs an "end-of-call-report" after each call. We parse the
 // transcript + summary, upsert the customer, save the call, and create
 // an appointment if the caller booked one.
 //
-// Required env (server-only):
-//   - VITE_SUPABASE_URL  (or SUPABASE_URL)
-//   - SUPABASE_SERVICE_ROLE_KEY
-//
-// NOTE: Lovable Cloud must be enabled and the `customers`, `calls`, and
-// `appointments` tables must exist with the columns referenced below.
+// This webhook writes to the Lovable Cloud managed Supabase instance using
+// the service-role admin client (`supabaseAdmin`), which reads:
+//   - SUPABASE_URL                 (Cloud-managed)
+//   - SUPABASE_SERVICE_ROLE_KEY    (Cloud-managed)
+// The service role bypasses RLS, which is required because a webhook has no
+// logged-in user. Rows are stamped with owner_id so they appear in the
+// owner-scoped dashboard queries.
 
+// Use the shared admin client so the webhook always targets the Cloud
+// instance. Returning it from a helper keeps the rest of the handler
+// unchanged and centralizes the client reference.
 function getSupabase() {
-  const url = process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  // Diagnostic logging — never log the actual secret values.
-  console.log("[vapi-webhook] env check:", {
-    hasUrl: Boolean(url),
-    hasServiceRoleKey: Boolean(key),
-    urlSource: process.env.VITE_SUPABASE_URL
-      ? "VITE_SUPABASE_URL"
-      : process.env.SUPABASE_URL
-        ? "SUPABASE_URL"
-        : "none",
-  });
-
-  if (!url || !key) {
-    throw new Error(
-      `Supabase env vars missing (url=${Boolean(url)}, serviceRoleKey=${Boolean(key)}).`,
-    );
-  }
-  return createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  return supabaseAdmin;
 }
 
 // Vapi has no concept of the app user, so inserted rows must be stamped with
