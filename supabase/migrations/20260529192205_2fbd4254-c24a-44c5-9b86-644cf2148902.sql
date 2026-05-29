@@ -1,0 +1,1 @@
+CREATE TABLE public.businesses (id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY, owner_id uuid, name text NOT NULL, industry text, phone text, email text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());

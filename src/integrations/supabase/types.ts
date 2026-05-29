@@ -64,6 +64,39 @@ export type Database = {
           },
         ]
       }
+      businesses: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          industry: string | null
+          name: string
+          owner_id: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          name: string
+          owner_id?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          name?: string
+          owner_id?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       calls: {
         Row: {
           caller_name: string | null
