@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RlsTestRouteImport } from './routes/rls-test'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
@@ -29,6 +30,11 @@ import { Route as AppCallsIdRouteImport } from './routes/_app/calls/$id'
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RlsTestRoute = RlsTestRouteImport.update({
+  id: '/rls-test',
+  path: '/rls-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/rls-test': typeof RlsTestRoute
   '/signup': typeof SignupRoute
   '/agent': typeof AppAgentRoute
   '/analytics': typeof AppAnalyticsRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/rls-test': typeof RlsTestRoute
   '/signup': typeof SignupRoute
   '/agent': typeof AppAgentRoute
   '/analytics': typeof AppAnalyticsRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/rls-test': typeof RlsTestRoute
   '/signup': typeof SignupRoute
   '/_app/agent': typeof AppAgentRoute
   '/_app/analytics': typeof AppAnalyticsRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/login'
     | '/onboarding'
+    | '/rls-test'
     | '/signup'
     | '/agent'
     | '/analytics'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/login'
     | '/onboarding'
+    | '/rls-test'
     | '/signup'
     | '/agent'
     | '/analytics'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/login'
     | '/onboarding'
+    | '/rls-test'
     | '/signup'
     | '/_app/agent'
     | '/_app/analytics'
@@ -220,6 +232,7 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  RlsTestRoute: typeof RlsTestRoute
   SignupRoute: typeof SignupRoute
   ApiVapiWebhookRoute: typeof ApiVapiWebhookRoute
 }
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rls-test': {
+      id: '/rls-test'
+      path: '/rls-test'
+      fullPath: '/rls-test'
+      preLoaderRoute: typeof RlsTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -373,6 +393,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  RlsTestRoute: RlsTestRoute,
   SignupRoute: SignupRoute,
   ApiVapiWebhookRoute: ApiVapiWebhookRoute,
 }
