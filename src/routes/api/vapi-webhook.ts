@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { Buffer } from "node:buffer";
-import { timingSafeEqual } from "node:crypto";
 
 // Vapi webhook endpoint: POST /api/vapi-webhook
 // Vapi POSTs an "end-of-call-report" after each call. We parse the
@@ -44,24 +42,28 @@ function getSupabase() {
 // an owner_id or RLS (auth.uid() = owner_id) will hide them in the dashboard.
 // Resolution order:
 //   1. WORKSPACE_OWNER_ID env var (explicit, preferred for multi-user setups)
-//   2. The single existing auth user (works for a single-clinic deployment)
+//   2. The first existing auth user (temporary debug fallback)
 async function resolveOwnerId(
   supabase: ReturnType<typeof getSupabase>,
 ): Promise<string | null> {
   const envOwner = process.env.WORKSPACE_OWNER_ID;
-  if (envOwner) return envOwner;
+  if (envOwner) {
+    console.log("[vapi-webhook] owner_id resolved from WORKSPACE_OWNER_ID");
+    return envOwner;
+  }
 
-  const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 2 });
+  console.log("[vapi-webhook] WORKSPACE_OWNER_ID not set; querying first auth user");
+  const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
   if (error) {
-    console.error("[vapi-webhook] listUsers error:", error);
+    console.error("[vapi-webhook] listUsers full error:", error);
     return null;
   }
   const users = data?.users ?? [];
-  if (users.length === 1) return users[0].id;
-  console.warn(
-    `[vapi-webhook] could not auto-resolve owner_id (found ${users.length} users). ` +
-      `Set WORKSPACE_OWNER_ID to assign ownership.`,
-  );
+  if (users[0]?.id) {
+    console.log("[vapi-webhook] owner_id resolved from first auth user", users[0].id);
+    return users[0].id;
+  }
+  console.warn("[vapi-webhook] could not auto-resolve owner_id; no auth users found");
   return null;
 }
 
