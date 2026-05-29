@@ -38,6 +38,32 @@ function getSupabase() {
   });
 }
 
+// Vapi has no concept of the app user, so inserted rows must be stamped with
+// an owner_id or RLS (auth.uid() = owner_id) will hide them in the dashboard.
+// Resolution order:
+//   1. WORKSPACE_OWNER_ID env var (explicit, preferred for multi-user setups)
+//   2. The single existing auth user (works for a single-clinic deployment)
+async function resolveOwnerId(
+  supabase: ReturnType<typeof getSupabase>,
+): Promise<string | null> {
+  const envOwner = process.env.WORKSPACE_OWNER_ID;
+  if (envOwner) return envOwner;
+
+  const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 2 });
+  if (error) {
+    console.error("[vapi-webhook] listUsers error:", error);
+    return null;
+  }
+  const users = data?.users ?? [];
+  if (users.length === 1) return users[0].id;
+  console.warn(
+    `[vapi-webhook] could not auto-resolve owner_id (found ${users.length} users). ` +
+      `Set WORKSPACE_OWNER_ID to assign ownership.`,
+  );
+  return null;
+}
+
+
 export const Route = createFileRoute("/api/vapi-webhook")({
   server: {
     handlers: {
