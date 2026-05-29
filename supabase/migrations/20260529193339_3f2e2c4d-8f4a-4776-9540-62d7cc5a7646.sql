@@ -1,0 +1,1 @@
+DELETE FROM auth.users WHERE email LIKE 'authtest_%@example.com' OR email LIKE 'logintest_%@example.com';

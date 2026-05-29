@@ -37,13 +37,18 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/dashboard` },
         });
         if (error) throw error;
-        toast.success("Hesap oluşturuldu. E-postanızı doğrulayın.");
+        if (data.session) {
+          toast.success("Hesabınız oluşturuldu.");
+          navigate({ to: search.redirect, replace: true });
+        } else {
+          toast.success("Hesap oluşturuldu. E-postanızı doğrulayın.");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
