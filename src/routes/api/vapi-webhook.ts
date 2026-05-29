@@ -16,23 +16,51 @@ import { createClient } from "@supabase/supabase-js";
 function getSupabase() {
   const url = process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  // Diagnostic logging — never log the actual secret values.
+  console.log("[vapi-webhook] env check:", {
+    hasUrl: Boolean(url),
+    hasServiceRoleKey: Boolean(key),
+    urlSource: process.env.VITE_SUPABASE_URL
+      ? "VITE_SUPABASE_URL"
+      : process.env.SUPABASE_URL
+        ? "SUPABASE_URL"
+        : "none",
+  });
+
   if (!url || !key) {
-    throw new Error("Supabase env vars missing (URL or SERVICE_ROLE_KEY).");
+    throw new Error(
+      `Supabase env vars missing (url=${Boolean(url)}, serviceRoleKey=${Boolean(key)}).`,
+    );
   }
-  return createClient(url, key);
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 
 export const Route = createFileRoute("/api/vapi-webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        console.log("[vapi-webhook] request received");
         try {
           const supabase = getSupabase();
           const body = await request.json();
 
+          const messageType = body?.message?.type;
+          console.log("[vapi-webhook] parsed body:", {
+            messageType,
+            hasCall: Boolean(body?.message?.call),
+            hasTranscript: Boolean(body?.message?.transcript),
+            hasSummary: Boolean(body?.message?.summary),
+          });
+
           // Only process call ended events
-          if (body?.message?.type !== "end-of-call-report") {
-            return Response.json({ received: true });
+          if (messageType !== "end-of-call-report") {
+            console.log(
+              `[vapi-webhook] ignoring event of type "${messageType}" (waiting for end-of-call-report)`,
+            );
+            return Response.json({ received: true, ignored: messageType });
           }
 
           const call = body.message.call ?? {};
@@ -48,14 +76,18 @@ export const Route = createFileRoute("/api/vapi-webhook")({
           const callerPhone: string = call.customer?.number ?? "unknown";
 
           // Find or create customer
-          let { data: customer } = await supabase
+          const { data: existingCustomer, error: findErr } = await supabase
             .from("customers")
             .select("id, total_calls")
             .eq("phone", callerPhone)
             .maybeSingle();
 
+          if (findErr) console.error("[vapi-webhook] customer lookup error:", findErr);
+
+          let customer = existingCustomer;
+
           if (!customer) {
-            const { data: newCustomer } = await supabase
+            const { data: newCustomer, error: insertCustErr } = await supabase
               .from("customers")
               .insert({
                 phone: callerPhone,
@@ -64,19 +96,23 @@ export const Route = createFileRoute("/api/vapi-webhook")({
               })
               .select("id, total_calls")
               .single();
+            if (insertCustErr)
+              console.error("[vapi-webhook] customer insert error:", insertCustErr);
             customer = newCustomer;
           } else {
-            await supabase
+            const { error: updateCustErr } = await supabase
               .from("customers")
               .update({ total_calls: (customer.total_calls ?? 0) + 1 })
               .eq("id", customer.id);
+            if (updateCustErr)
+              console.error("[vapi-webhook] customer update error:", updateCustErr);
           }
 
           const startedAt = call.startedAt ? new Date(call.startedAt).getTime() : 0;
           const endedAt = call.endedAt ? new Date(call.endedAt).getTime() : 0;
           const duration = startedAt && endedAt ? Math.round((endedAt - startedAt) / 1000) : 0;
 
-          await supabase.from("calls").insert({
+          const { error: callErr } = await supabase.from("calls").insert({
             caller_phone: callerPhone,
             caller_name: extractName(transcript),
             duration,
@@ -87,11 +123,16 @@ export const Route = createFileRoute("/api/vapi-webhook")({
             vapi_call_id: call.id,
             customer_id: customer?.id,
           });
+          if (callErr) {
+            console.error("[vapi-webhook] call insert error:", callErr);
+          } else {
+            console.log("[vapi-webhook] call inserted for", callerPhone);
+          }
 
           if (extracted.intent === "book_appointment") {
             const appointmentTime = extractAppointmentTime(transcript);
             if (appointmentTime) {
-              await supabase.from("appointments").insert({
+              const { error: apptErr } = await supabase.from("appointments").insert({
                 customer_name: extractName(transcript),
                 customer_phone: callerPhone,
                 service: extracted.service,
@@ -99,13 +140,19 @@ export const Route = createFileRoute("/api/vapi-webhook")({
                 status: "pending",
                 customer_id: customer?.id,
               });
+              if (apptErr)
+                console.error("[vapi-webhook] appointment insert error:", apptErr);
+              else console.log("[vapi-webhook] appointment created for", callerPhone);
             }
           }
 
           return Response.json({ success: true });
         } catch (error) {
-          console.error("Vapi webhook error:", error);
-          return Response.json({ error: "Webhook failed" }, { status: 500 });
+          console.error("[vapi-webhook] webhook error:", error);
+          return Response.json(
+            { error: error instanceof Error ? error.message : "Webhook failed" },
+            { status: 500 },
+          );
         }
       },
     },
