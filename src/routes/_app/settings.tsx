@@ -11,23 +11,21 @@ const TABS = ["Profile", "Vapi", "Team", "Notifications", "Integrations", "Dange
 function Settings() {
   const [tab, setTab] = useState<typeof TABS[number]>("Profile");
   const [webhookUrl, setWebhookUrl] = useState("");
-  const [vapiKey, setVapiKey] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     setWebhookUrl(localStorage.getItem("vapi.webhookUrl") ?? `${window.location.origin}/api/vapi-webhook`);
-    setVapiKey(localStorage.getItem("vapi.apiKey") ?? "");
   }, []);
 
   const saveVapi = () => {
     localStorage.setItem("vapi.webhookUrl", webhookUrl);
-    localStorage.setItem("vapi.apiKey", vapiKey);
     toast.success("Vapi ayarları kaydedildi");
   };
   const copyWebhook = async () => {
     await navigator.clipboard.writeText(webhookUrl);
     toast.success("Webhook URL kopyalandı");
   };
+
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -71,13 +69,10 @@ function Settings() {
               </div>
               <div>
                 <label className="text-xs font-medium">Vapi API Key</label>
-                <input
-                  value={vapiKey}
-                  onChange={(e) => setVapiKey(e.target.value)}
-                  placeholder="vapi_..."
-                  className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm font-mono outline-none focus:border-primary"
-                />
-                <p className="text-[11px] text-muted-foreground mt-1">Yalnızca tarayıcıda saklanır. Production için backend secret'a taşıyın.</p>
+                <div className="mt-1 w-full rounded-md border border-border bg-muted/40 px-3 py-2.5 text-sm text-muted-foreground">
+                  Güvenli bir backend secret olarak saklanıyor (VAPI_API_KEY). Anahtar tarayıcıda tutulmaz ve burada gösterilmez.
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">Anahtarı güncellemek için Lovable Cloud secret ayarlarını kullanın.</p>
               </div>
               <button onClick={saveVapi} className="bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:opacity-90">Kaydet</button>
             </div>

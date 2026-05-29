@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { Buffer } from "node:buffer";
+import { timingSafeEqual } from "node:crypto";
 
 // Vapi webhook endpoint: POST /api/vapi-webhook
 // Vapi POSTs an "end-of-call-report" after each call. We parse the
@@ -69,9 +71,30 @@ export const Route = createFileRoute("/api/vapi-webhook")({
     handlers: {
       POST: async ({ request }) => {
         console.log("[vapi-webhook] request received");
+
+        // Verify the request actually came from Vapi before touching the DB.
+        // Configure the same value in Vapi (Assistant → Server URL → Secret),
+        // which Vapi sends back on every request as the `x-vapi-secret` header.
+        const webhookSecret = process.env.VAPI_WEBHOOK_SECRET;
+        if (!webhookSecret) {
+          console.error("[vapi-webhook] VAPI_WEBHOOK_SECRET is not configured");
+          return Response.json({ error: "Server not configured" }, { status: 503 });
+        }
+        const providedSecret =
+          request.headers.get("x-vapi-secret") ??
+          request.headers.get("x-vapi-signature") ??
+          "";
+        const a = Buffer.from(providedSecret);
+        const b = Buffer.from(webhookSecret);
+        if (a.length !== b.length || !timingSafeEqual(a, b)) {
+          console.warn("[vapi-webhook] rejected request with invalid secret");
+          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         try {
           const supabase = getSupabase();
           const body = await request.json();
+
 
           const messageType = body?.message?.type;
           console.log("[vapi-webhook] parsed body:", {
