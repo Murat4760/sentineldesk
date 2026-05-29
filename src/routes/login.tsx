@@ -23,6 +23,7 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   const search = mode === "signin" ? Route.useSearch() : { redirect: "/dashboard" };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const title = mode === "signin" ? "Tekrar hoş geldiniz" : "Ücretsiz hesap oluşturun";
@@ -34,28 +35,33 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setErrorMessage("");
     setLoading(true);
     try {
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/dashboard` },
         });
         if (error) throw error;
         if (data.session) {
           toast.success("Hesabınız oluşturuldu.");
-          navigate({ to: search.redirect, replace: true });
+          navigate({ to: "/dashboard", replace: true });
         } else {
           toast.success("Hesap oluşturuldu. E-postanızı doğrulayın.");
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
         if (error) throw error;
-        navigate({ to: search.redirect, replace: true });
+        if (data.session) navigate({ to: "/dashboard", replace: true });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Bir hata oluştu");
+      const message = err instanceof Error ? err.message : "Bir hata oluştu";
+      setErrorMessage(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -108,6 +114,11 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
                   Parolanızı mı unuttunuz?
                 </Link>
               </div>
+            )}
+            {errorMessage && (
+              <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive" role="alert">
+                {errorMessage}
+              </p>
             )}
             <button type="submit" disabled={loading} className="w-full h-10 rounded-md bg-foreground text-background text-sm font-medium hover:opacity-90 transition inline-flex items-center justify-center gap-1.5 disabled:opacity-60">
               {loading ? "Lütfen bekleyin…" : cta} <ArrowRight className="size-3.5" />
