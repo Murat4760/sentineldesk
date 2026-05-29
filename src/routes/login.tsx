@@ -97,6 +97,13 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
               <label className="text-xs font-medium">Parola</label>
               <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm outline-none focus:border-primary transition" />
             </div>
+            {mode === "signin" && (
+              <div className="text-right">
+                <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground hover:underline">
+                  Parolanızı mı unuttunuz?
+                </Link>
+              </div>
+            )}
             <button type="submit" disabled={loading} className="w-full h-10 rounded-md bg-foreground text-background text-sm font-medium hover:opacity-90 transition inline-flex items-center justify-center gap-1.5 disabled:opacity-60">
               {loading ? "Lütfen bekleyin…" : cta} <ArrowRight className="size-3.5" />
             </button>
