@@ -11,23 +11,21 @@ const TABS = ["Profile", "Vapi", "Team", "Notifications", "Integrations", "Dange
 function Settings() {
   const [tab, setTab] = useState<typeof TABS[number]>("Profile");
   const [webhookUrl, setWebhookUrl] = useState("");
-  const [vapiKey, setVapiKey] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     setWebhookUrl(localStorage.getItem("vapi.webhookUrl") ?? `${window.location.origin}/api/vapi-webhook`);
-    setVapiKey(localStorage.getItem("vapi.apiKey") ?? "");
   }, []);
 
   const saveVapi = () => {
     localStorage.setItem("vapi.webhookUrl", webhookUrl);
-    localStorage.setItem("vapi.apiKey", vapiKey);
     toast.success("Vapi ayarları kaydedildi");
   };
   const copyWebhook = async () => {
     await navigator.clipboard.writeText(webhookUrl);
     toast.success("Webhook URL kopyalandı");
   };
+
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
