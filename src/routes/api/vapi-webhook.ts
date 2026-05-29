@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { Buffer } from "node:buffer";
+import { timingSafeEqual } from "node:crypto";
 
 // Vapi webhook endpoint: POST /api/vapi-webhook
 // Vapi POSTs an "end-of-call-report" after each call. We parse the
