@@ -171,10 +171,10 @@ export const Route = createFileRoute("/api/vapi-webhook")({
                 customer_phone: callerPhone,
                 service: extracted.service,
                 appointment_datetime: appointmentTime,
+                status: "pending",
                 customer_id: customer?.id,
                 owner_id: ownerId,
 
-                customer_id: customer?.id,
               });
               if (apptErr)
                 console.error("[vapi-webhook] appointment insert error:", apptErr);
