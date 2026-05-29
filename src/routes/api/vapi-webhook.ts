@@ -115,16 +115,19 @@ export const Route = createFileRoute("/api/vapi-webhook")({
           if (findErr) console.error("[vapi-webhook] customer lookup error:", findErr);
 
           let customer = existingCustomer;
+
+          if (!customer) {
+            const { data: newCustomer, error: insertCustErr } = await supabase
+              .from("customers")
               .insert({
                 phone: callerPhone,
                 name: extractName(transcript),
                 total_calls: 1,
                 owner_id: ownerId,
               })
-
-              })
               .select("id, total_calls")
               .single();
+
             if (insertCustErr)
               console.error("[vapi-webhook] customer insert error:", insertCustErr);
             customer = newCustomer;
