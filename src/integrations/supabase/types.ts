@@ -192,6 +192,47 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_configs: {
+        Row: {
+          assistant_id: string | null
+          business_id: string | null
+          config: Json
+          created_at: string
+          id: string
+          owner_id: string | null
+          phone_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          assistant_id?: string | null
+          business_id?: string | null
+          config?: Json
+          created_at?: string
+          id?: string
+          owner_id?: string | null
+          phone_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assistant_id?: string | null
+          business_id?: string | null
+          config?: Json
+          created_at?: string
+          id?: string
+          owner_id?: string | null
+          phone_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_configs_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
