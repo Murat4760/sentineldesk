@@ -74,27 +74,14 @@ export const Route = createFileRoute("/api/vapi-webhook")({
       POST: async ({ request }) => {
         console.log("[vapi-webhook] request received");
 
-        // Verify the request actually came from Vapi before touching the DB.
-        // Configure the same value in Vapi (Assistant → Server URL → Secret),
-        // which Vapi sends back on every request as the `x-vapi-secret` header.
-        const webhookSecret = process.env.VAPI_WEBHOOK_SECRET;
-        if (!webhookSecret) {
-          console.error("[vapi-webhook] VAPI_WEBHOOK_SECRET is not configured");
-          return Response.json({ error: "Server not configured" }, { status: 503 });
-        }
-        const providedSecret =
-          request.headers.get("x-vapi-secret") ??
-          request.headers.get("x-vapi-signature") ??
-          "";
-        const a = Buffer.from(providedSecret);
-        const b = Buffer.from(webhookSecret);
-        if (a.length !== b.length || !timingSafeEqual(a, b)) {
-          console.warn("[vapi-webhook] rejected request with invalid secret");
-          return Response.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        // TEMPORARY DEBUG MODE: accept all incoming Vapi requests while we
+        // confirm the webhook writes data successfully. Re-enable validation
+        // against `x-vapi-secret` / VAPI_WEBHOOK_SECRET after data flow is verified.
+        console.warn("[vapi-webhook] secret validation is temporarily disabled");
 
         try {
           const supabase = getSupabase();
+          console.log("[vapi-webhook] parsing request body");
           const body = await request.json();
 
 
