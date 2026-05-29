@@ -101,6 +101,10 @@ export const Route = createFileRoute("/api/vapi-webhook")({
 
           const callerPhone: string = call.customer?.number ?? "unknown";
 
+          const ownerId = await resolveOwnerId(supabase);
+          console.log("[vapi-webhook] resolved owner_id:", ownerId ?? "none");
+
+
           // Find or create customer
           const { data: existingCustomer, error: findErr } = await supabase
             .from("customers")
