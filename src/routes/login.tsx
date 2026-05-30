@@ -46,7 +46,7 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
         if (error) throw error;
         if (data.session) {
           toast.success("Hesabınız oluşturuldu.");
-          navigate({ to: "/dashboard", replace: true });
+          navigate({ to: "/onboarding", replace: true });
         } else {
           toast.success("Hesap oluşturuldu. E-postanızı doğrulayın.");
         }

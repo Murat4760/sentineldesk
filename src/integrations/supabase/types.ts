@@ -17,6 +17,7 @@ export type Database = {
       appointments: {
         Row: {
           appointment_datetime: string
+          business_id: string | null
           created_at: string
           customer_id: string | null
           customer_name: string | null
@@ -30,6 +31,7 @@ export type Database = {
         }
         Insert: {
           appointment_datetime: string
+          business_id?: string | null
           created_at?: string
           customer_id?: string | null
           customer_name?: string | null
@@ -43,6 +45,7 @@ export type Database = {
         }
         Update: {
           appointment_datetime?: string
+          business_id?: string | null
           created_at?: string
           customer_id?: string | null
           customer_name?: string | null
@@ -99,6 +102,7 @@ export type Database = {
       }
       calls: {
         Row: {
+          business_id: string | null
           caller_name: string | null
           caller_phone: string
           created_at: string
@@ -114,6 +118,7 @@ export type Database = {
           vapi_call_id: string | null
         }
         Insert: {
+          business_id?: string | null
           caller_name?: string | null
           caller_phone: string
           created_at?: string
@@ -129,6 +134,7 @@ export type Database = {
           vapi_call_id?: string | null
         }
         Update: {
+          business_id?: string | null
           caller_name?: string | null
           caller_phone?: string
           created_at?: string
@@ -155,6 +161,7 @@ export type Database = {
       }
       customers: {
         Row: {
+          business_id: string | null
           created_at: string
           email: string | null
           id: string
@@ -167,6 +174,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          business_id?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -179,6 +187,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          business_id?: string | null
           created_at?: string
           email?: string | null
           id?: string
