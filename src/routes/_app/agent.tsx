@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { voices } from "@/lib/mock-data";
+import { voices } from "@/lib/voices";
 import { StaticWaveform } from "@/components/effects/Waveform";
 import { Play, GripVertical, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
