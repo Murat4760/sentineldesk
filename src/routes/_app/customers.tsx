@@ -24,7 +24,7 @@ function Customers() {
       <div className="flex items-end justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Customers</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{mockCustomers.length} contacts</p>
+          <p className="text-sm text-muted-foreground mt-0.5">{customers.length} contacts</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="relative">
