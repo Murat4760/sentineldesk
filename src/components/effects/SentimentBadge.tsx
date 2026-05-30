@@ -1,4 +1,4 @@
-import type { Sentiment, Outcome } from "@/lib/mock-data";
+import type { Sentiment, Outcome } from "@/lib/data";
 
 export function SentimentDot({ sentiment }: { sentiment: Sentiment }) {
   const color = sentiment === "positive" ? "bg-[color:var(--color-success)]" : sentiment === "negative" ? "bg-destructive" : "bg-muted-foreground";

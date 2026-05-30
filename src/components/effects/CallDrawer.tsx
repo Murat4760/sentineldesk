@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import type { Call } from "@/lib/mock-data";
+import type { Call } from "@/lib/data";
 import { OutcomeBadge, SentimentDot } from "./SentimentBadge";
 import { WaveformPlayer } from "./Waveform";
 import { X, ExternalLink } from "lucide-react";
