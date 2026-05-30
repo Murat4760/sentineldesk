@@ -142,16 +142,13 @@ export const Route = createFileRoute("/api/vapi-webhook")({
             customer_id: customer?.id,
             owner_id: ownerId,
           };
-          console.log("[vapi-webhook] call insert attempted", callInsert);
-          const { data: insertedCall, error: callErr } = await supabase
+          const { error: callErr } = await supabase
             .from("calls")
             .insert(callInsert)
             .select("id")
             .single();
           if (callErr) {
-            console.error("[vapi-webhook] call insert full error:", callErr);
-          } else {
-            console.log("[vapi-webhook] call insert result", insertedCall);
+            console.error("[vapi-webhook] call insert error:", callErr.message);
           }
 
           if (extracted.intent === "book_appointment") {
@@ -166,16 +163,12 @@ export const Route = createFileRoute("/api/vapi-webhook")({
                 customer_id: customer?.id,
                 owner_id: ownerId,
               };
-              console.log("[vapi-webhook] appointment insert attempted", appointmentInsert);
-              const { data: insertedAppointment, error: apptErr } = await supabase
+              const { error: apptErr } = await supabase
                 .from("appointments")
                 .insert(appointmentInsert)
                 .select("id")
                 .single();
-              if (apptErr) console.error("[vapi-webhook] appointment insert full error:", apptErr);
-              else console.log("[vapi-webhook] appointment insert result", insertedAppointment);
-            } else {
-              console.log("[vapi-webhook] no appointment time extracted; appointment insert skipped");
+              if (apptErr) console.error("[vapi-webhook] appointment insert error:", apptErr.message);
             }
           }
 
