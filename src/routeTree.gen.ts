@@ -10,12 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as RlsTestRouteImport } from './routes/rls-test'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiVapiWebhookRouteImport } from './routes/api/vapi-webhook'
@@ -32,11 +30,6 @@ import { Route as AppCallsIdRouteImport } from './routes/_app/calls/$id'
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RlsTestRoute = RlsTestRouteImport.update({
-  id: '/rls-test',
-  path: '/rls-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -57,11 +50,6 @@ const LoginRoute = LoginRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiagnosticsRoute = DiagnosticsRouteImport.update({
-  id: '/diagnostics',
-  path: '/diagnostics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -126,12 +114,10 @@ const AppCallsIdRoute = AppCallsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/diagnostics': typeof DiagnosticsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/rls-test': typeof RlsTestRoute
   '/signup': typeof SignupRoute
   '/agent': typeof AppAgentRoute
   '/analytics': typeof AppAnalyticsRoute
@@ -146,12 +132,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/diagnostics': typeof DiagnosticsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/rls-test': typeof RlsTestRoute
   '/signup': typeof SignupRoute
   '/agent': typeof AppAgentRoute
   '/analytics': typeof AppAnalyticsRoute
@@ -168,12 +152,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
-  '/diagnostics': typeof DiagnosticsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/rls-test': typeof RlsTestRoute
   '/signup': typeof SignupRoute
   '/_app/agent': typeof AppAgentRoute
   '/_app/analytics': typeof AppAnalyticsRoute
@@ -190,12 +172,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/diagnostics'
     | '/forgot-password'
     | '/login'
     | '/onboarding'
     | '/reset-password'
-    | '/rls-test'
     | '/signup'
     | '/agent'
     | '/analytics'
@@ -210,12 +190,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/diagnostics'
     | '/forgot-password'
     | '/login'
     | '/onboarding'
     | '/reset-password'
-    | '/rls-test'
     | '/signup'
     | '/agent'
     | '/analytics'
@@ -231,12 +209,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
-    | '/diagnostics'
     | '/forgot-password'
     | '/login'
     | '/onboarding'
     | '/reset-password'
-    | '/rls-test'
     | '/signup'
     | '/_app/agent'
     | '/_app/analytics'
@@ -253,12 +229,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
-  DiagnosticsRoute: typeof DiagnosticsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  RlsTestRoute: typeof RlsTestRoute
   SignupRoute: typeof SignupRoute
   ApiVapiWebhookRoute: typeof ApiVapiWebhookRoute
 }
@@ -270,13 +244,6 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rls-test': {
-      id: '/rls-test'
-      path: '/rls-test'
-      fullPath: '/rls-test'
-      preLoaderRoute: typeof RlsTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -305,13 +272,6 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/diagnostics': {
-      id: '/diagnostics'
-      path: '/diagnostics'
-      fullPath: '/diagnostics'
-      preLoaderRoute: typeof DiagnosticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -430,15 +390,23 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
-  DiagnosticsRoute: DiagnosticsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  RlsTestRoute: RlsTestRoute,
   SignupRoute: SignupRoute,
   ApiVapiWebhookRoute: ApiVapiWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
