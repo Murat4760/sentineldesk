@@ -99,13 +99,12 @@ function Settings() {
           )}
           {tab === "Team" && (
             <div className="space-y-3">
-              {["Marcus Kane — Owner", "Priya Patel — Admin", "James Liu — Viewer"].map(m => (
+              {[`${profile.name || profile.email || "You"} — Owner`].map(m => (
                 <div key={m} className="flex items-center justify-between border-b border-border pb-3 last:border-0">
                   <div className="flex items-center gap-3">
                     <div className="size-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold">{m[0]}</div>
                     <span className="text-sm">{m}</span>
                   </div>
-                  <button className="text-xs text-muted-foreground hover:text-destructive">Remove</button>
                 </div>
               ))}
               <button className="text-sm text-primary">+ Invite teammate</button>
