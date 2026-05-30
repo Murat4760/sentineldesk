@@ -61,9 +61,9 @@ function PersonaTab() {
 
   const [voiceId, setVoiceId] = useState("");
 
-  useState(() => {
+  useEffect(() => {
     if (config?.voiceId) setVoiceId(config.voiceId);
-  });
+  }, [config?.voiceId]);
 
   const mutation = useMutation({
     mutationFn: (id: string) => saveConfig({ data: { voiceId: id } }),
