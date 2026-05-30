@@ -104,7 +104,7 @@ function Dashboard() {
               <span className="text-sm font-medium">Today's appointments</span>
             </div>
             <div className="divide-y divide-border">
-              {mockAppointments.slice(0, 4).map(a => (
+              {apptsToday.slice(0, 4).map(a => (
                 <div key={a.id} className="px-4 py-3 flex items-center gap-3">
                   <div className="text-center w-12 shrink-0">
                     <div className="font-mono text-sm font-semibold">{a.time}</div>
@@ -115,7 +115,11 @@ function Dashboard() {
                   </div>
                 </div>
               ))}
+              {apptsToday.length === 0 && (
+                <div className="px-4 py-8 text-center text-xs text-muted-foreground">No appointments today.</div>
+              )}
             </div>
+
           </div>
 
           <div className="border border-border bg-card rounded-lg p-4 space-y-2">
