@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { mockCustomers } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { customersQueryOptions } from "@/lib/data";
 import { motion } from "framer-motion";
 import { LayoutGrid, List, Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -10,9 +11,11 @@ export const Route = createFileRoute("/_app/customers")({
 });
 
 function Customers() {
+  const { data: customers = [] } = useQuery(customersQueryOptions);
   const [view, setView] = useState<"table" | "card">("table");
   const [q, setQ] = useState("");
-  const filtered = mockCustomers.filter(c => c.name.toLowerCase().includes(q.toLowerCase()));
+  const filtered = customers.filter(c => c.name.toLowerCase().includes(q.toLowerCase()));
+
 
   const tagColor = (t: string) => ({ vip: "bg-[color:var(--color-warning)]/15 text-[color:var(--color-warning)]", new: "bg-primary/15 text-primary", repeat: "bg-[color:var(--color-success)]/15 text-[color:var(--color-success)]", "follow-up": "bg-muted text-muted-foreground" } as any)[t] ?? "bg-muted text-muted-foreground";
 
