@@ -26,6 +26,7 @@ export interface Call {
     preferredDate?: string;
     preferredTime?: string;
     isNewPatient?: boolean;
+    businessHours?: boolean;
     notes?: string;
   };
 }
