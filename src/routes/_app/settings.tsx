@@ -61,9 +61,9 @@ function Settings() {
         <div className="border border-border bg-card rounded-lg p-6">
           {tab === "Profile" && (
             <div className="space-y-4">
-              <Field label="Name" defaultValue="Marcus Kane" />
-              <Field label="Email" defaultValue="marcus@webbplumbing.com" />
-              <Field label="Phone" defaultValue="+1 (415) 555-0142" mono />
+              <Field key={`name-${profile.name}`} label="Name" defaultValue={profile.name} placeholder="Your name" />
+              <Field key={`email-${profile.email}`} label="Email" defaultValue={profile.email} placeholder="you@company.com" />
+              <Field key={`phone-${profile.phone}`} label="Phone" defaultValue={profile.phone} placeholder="+1 (000) 000-0000" mono />
               <button onClick={() => toast.success("Profile saved")} className="mt-2 bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:opacity-90">Save changes</button>
             </div>
           )}
