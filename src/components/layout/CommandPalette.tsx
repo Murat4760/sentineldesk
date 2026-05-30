@@ -1,11 +1,15 @@
 import { Command } from "cmdk";
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { mockCalls, mockCustomers } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { callsQueryOptions, customersQueryOptions } from "@/lib/data";
 import { LayoutGrid, PhoneCall, Calendar, Bot, Users, BarChart3, CreditCard, Settings, Phone } from "lucide-react";
 
 export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const nav = useNavigate();
+  const { data: calls = [] } = useQuery(callsQueryOptions);
+  const { data: customers = [] } = useQuery(customersQueryOptions);
+
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
