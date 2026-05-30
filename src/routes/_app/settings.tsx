@@ -147,11 +147,11 @@ function Settings() {
   );
 }
 
-function Field({ label, defaultValue, mono }: { label: string; defaultValue: string; mono?: boolean }) {
+function Field({ label, defaultValue, mono, placeholder }: { label: string; defaultValue: string; mono?: boolean; placeholder?: string }) {
   return (
     <div>
       <label className="text-xs font-medium">{label}</label>
-      <input defaultValue={defaultValue} className={`mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm outline-none focus:border-primary ${mono ? "font-mono" : ""}`} />
+      <input defaultValue={defaultValue} placeholder={placeholder} className={`mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm outline-none focus:border-primary ${mono ? "font-mono" : ""}`} />
     </div>
   );
 }
