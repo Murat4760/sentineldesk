@@ -74,9 +74,15 @@ export const Route = createFileRoute("/api/vapi-webhook")({
           const transcript: string = body.message.transcript ?? "";
           const summary: string = body.message.summary ?? "";
 
+          // Always extract details from the transcript, regardless of intent.
+          const { date: preferredDate, time: preferredTime } = extractPreferredDateTime(transcript);
           const extracted = {
             intent: summary.includes("randevu") ? "book_appointment" : "info",
             service: extractService(transcript),
+            preferredDate,
+            preferredTime,
+            businessHours: extractBusinessHoursAsk(transcript),
+            isNewPatient: isNewPatient(transcript),
             notes: summary,
           };
 
