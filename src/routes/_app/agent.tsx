@@ -2,10 +2,11 @@ import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { voices } from "@/lib/voices";
-import { StaticWaveform } from "@/components/effects/Waveform";
-import { Play, GripVertical, RotateCcw } from "lucide-react";
+import { GripVertical, RotateCcw, Save } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getVoiceConfig, saveVoiceConfig } from "@/lib/voice-config.functions";
 
 export const Route = createFileRoute("/_app/agent")({
   component: Agent,
@@ -49,23 +50,52 @@ function Agent() {
 }
 
 function PersonaTab() {
-  const [v, setV] = useState(voices[0].id);
+  const queryClient = useQueryClient();
+  const fetchConfig = useServerFn(getVoiceConfig);
+  const saveConfig = useServerFn(saveVoiceConfig);
+
+  const { data: config, isLoading } = useQuery({
+    queryKey: ["voice-config"],
+    queryFn: () => fetchConfig(),
+  });
+
+  const [voiceId, setVoiceId] = useState("");
+
+  useState(() => {
+    if (config?.voiceId) setVoiceId(config.voiceId);
+  });
+
+  const mutation = useMutation({
+    mutationFn: (id: string) => saveConfig({ data: { voiceId: id } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["voice-config"] });
+      toast.success("Voice ID saved");
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to save");
+    },
+  });
+
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-sm font-medium mb-2">Voice</div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {voices.map((voice, i) => (
-            <button key={voice.id} onClick={() => setV(voice.id)} className={`text-left border rounded-lg p-3 transition ${v === voice.id ? "border-primary bg-primary/5" : "border-border bg-card hover:border-foreground/20"}`}>
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-sm">{voice.name}</span>
-                <span className="size-6 rounded-full border border-border flex items-center justify-center"><Play className="size-2.5 ml-0.5" /></span>
-              </div>
-              <StaticWaveform seed={i + 1} bars={30} className="mt-2 h-6" />
-              <div className="mt-1.5 text-[10px] text-muted-foreground">{voice.traits}</div>
-            </button>
-          ))}
-        </div>
+        <label className="text-sm font-medium">ElevenLabs Voice ID</label>
+        <input
+          type="text"
+          value={voiceId}
+          onChange={e => setVoiceId(e.target.value)}
+          placeholder="e.g. 21m00Tcm4TlvDq8ikWAM"
+          className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-card text-sm outline-none focus:border-primary"
+        />
+        <p className="mt-1.5 text-xs text-muted-foreground">ElevenLabs Voice Library&apos;den Voice ID kopyalayın</p>
+        <button
+          onClick={() => mutation.mutate(voiceId)}
+          disabled={mutation.isPending || isLoading}
+          className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
+        >
+          <Save className="size-4" />
+          {mutation.isPending ? "Saving…" : "Save"}
+        </button>
       </div>
       <div>
         <label className="text-sm font-medium">Language</label>
