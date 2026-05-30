@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, Check, Play, Phone } from "lucide-react";
-import { voices } from "@/lib/mock-data";
+import { voices } from "@/lib/voices";
 import confetti from "canvas-confetti";
 import { StaticWaveform } from "@/components/effects/Waveform";
 

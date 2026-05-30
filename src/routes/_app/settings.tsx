@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app/settings")({
   component: Settings,
@@ -11,11 +12,30 @@ const TABS = ["Profile", "Vapi", "Team", "Notifications", "Integrations", "Dange
 function Settings() {
   const [tab, setTab] = useState<typeof TABS[number]>("Profile");
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [profile, setProfile] = useState<{ name: string; email: string; phone: string }>({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     setWebhookUrl(localStorage.getItem("vapi.webhookUrl") ?? `${window.location.origin}/api/vapi-webhook`);
   }, []);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const u = data.user;
+      if (!u) return;
+      const meta = (u.user_metadata ?? {}) as Record<string, string>;
+      setProfile({
+        name: meta.full_name ?? meta.name ?? "",
+        email: u.email ?? "",
+        phone: u.phone ?? meta.phone ?? "",
+      });
+    });
+  }, []);
+
 
   const saveVapi = () => {
     localStorage.setItem("vapi.webhookUrl", webhookUrl);
@@ -41,9 +61,9 @@ function Settings() {
         <div className="border border-border bg-card rounded-lg p-6">
           {tab === "Profile" && (
             <div className="space-y-4">
-              <Field label="Name" defaultValue="Marcus Kane" />
-              <Field label="Email" defaultValue="marcus@webbplumbing.com" />
-              <Field label="Phone" defaultValue="+1 (415) 555-0142" mono />
+              <Field key={`name-${profile.name}`} label="Name" defaultValue={profile.name} placeholder="Your name" />
+              <Field key={`email-${profile.email}`} label="Email" defaultValue={profile.email} placeholder="you@company.com" />
+              <Field key={`phone-${profile.phone}`} label="Phone" defaultValue={profile.phone} placeholder="+1 (000) 000-0000" mono />
               <button onClick={() => toast.success("Profile saved")} className="mt-2 bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:opacity-90">Save changes</button>
             </div>
           )}
@@ -79,13 +99,12 @@ function Settings() {
           )}
           {tab === "Team" && (
             <div className="space-y-3">
-              {["Marcus Kane — Owner", "Priya Patel — Admin", "James Liu — Viewer"].map(m => (
+              {[`${profile.name || profile.email || "You"} — Owner`].map(m => (
                 <div key={m} className="flex items-center justify-between border-b border-border pb-3 last:border-0">
                   <div className="flex items-center gap-3">
                     <div className="size-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold">{m[0]}</div>
                     <span className="text-sm">{m}</span>
                   </div>
-                  <button className="text-xs text-muted-foreground hover:text-destructive">Remove</button>
                 </div>
               ))}
               <button className="text-sm text-primary">+ Invite teammate</button>
@@ -127,11 +146,11 @@ function Settings() {
   );
 }
 
-function Field({ label, defaultValue, mono }: { label: string; defaultValue: string; mono?: boolean }) {
+function Field({ label, defaultValue, mono, placeholder }: { label: string; defaultValue: string; mono?: boolean; placeholder?: string }) {
   return (
     <div>
       <label className="text-xs font-medium">{label}</label>
-      <input defaultValue={defaultValue} className={`mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm outline-none focus:border-primary ${mono ? "font-mono" : ""}`} />
+      <input defaultValue={defaultValue} placeholder={placeholder} className={`mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm outline-none focus:border-primary ${mono ? "font-mono" : ""}`} />
     </div>
   );
 }
