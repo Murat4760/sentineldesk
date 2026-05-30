@@ -109,9 +109,10 @@ function mapCall(r: CallRow): Call {
     extracted: {
       intent: String(ex.intent ?? "—"),
       service: ex.service != null ? String(ex.service) : undefined,
-      preferredDate: ex.preferredDate != null ? String(ex.preferredDate) : undefined,
-      preferredTime: ex.preferredTime != null ? String(ex.preferredTime) : undefined,
+      preferredDate: ex.preferredDate ? String(ex.preferredDate) : undefined,
+      preferredTime: ex.preferredTime ? String(ex.preferredTime) : undefined,
       isNewPatient: typeof ex.isNewPatient === "boolean" ? ex.isNewPatient : undefined,
+      businessHours: typeof ex.businessHours === "boolean" ? ex.businessHours : undefined,
       notes: ex.notes != null ? String(ex.notes) : undefined,
     },
   };
