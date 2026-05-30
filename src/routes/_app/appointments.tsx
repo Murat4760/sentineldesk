@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { mockAppointments } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { appointmentsQueryOptions, type Appointment } from "@/lib/data";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 
@@ -12,15 +13,16 @@ export const Route = createFileRoute("/_app/appointments")({
 type View = "month" | "week" | "day";
 
 function Appointments() {
+  const { data: appointments = [] } = useQuery(appointmentsQueryOptions);
   const [view, setView] = useState<View>("week");
-  const [selected, setSelected] = useState<typeof mockAppointments[number] | null>(null);
+  const [selected, setSelected] = useState<Appointment | null>(null);
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
       <div className="flex items-end justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Appointments</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{mockAppointments.length} upcoming</p>
+          <p className="text-sm text-muted-foreground mt-0.5">{appointments.length} total</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="relative flex border border-border rounded-md bg-card p-0.5">
@@ -36,7 +38,7 @@ function Appointments() {
             ))}
           </div>
           <button className="size-8 border border-border rounded-md hover:bg-accent flex items-center justify-center"><ChevronLeft className="size-3.5" /></button>
-          <div className="text-sm font-medium px-2">May 2026</div>
+          <div className="text-sm font-medium px-2">{new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}</div>
           <button className="size-8 border border-border rounded-md hover:bg-accent flex items-center justify-center"><ChevronRight className="size-3.5" /></button>
           <button className="ml-2 inline-flex items-center gap-1.5 bg-foreground text-background px-3 py-1.5 rounded-md text-sm font-medium hover:opacity-90"><Plus className="size-3.5" /> New</button>
         </div>
@@ -49,9 +51,15 @@ function Appointments() {
           transition={{ duration: 0.2 }}
           className="border border-border bg-card rounded-lg overflow-hidden"
         >
-          {view === "month" && <MonthGrid onSelect={setSelected} />}
-          {view === "week" && <WeekGrid onSelect={setSelected} />}
-          {view === "day" && <DayList onSelect={setSelected} />}
+          {appointments.length === 0 ? (
+            <div className="px-4 py-16 text-center text-sm text-muted-foreground">No appointments yet.</div>
+          ) : view === "month" ? (
+            <MonthGrid appointments={appointments} onSelect={setSelected} />
+          ) : view === "week" ? (
+            <WeekGrid appointments={appointments} onSelect={setSelected} />
+          ) : (
+            <DayList appointments={appointments} onSelect={setSelected} />
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -69,7 +77,6 @@ function Appointments() {
                 <Row k="Service" v={selected.service} />
                 <Row k="Date" v={selected.date} />
                 <Row k="Time" v={selected.time} />
-                <Row k="Duration" v={`${selected.duration} min`} />
                 <Row k="Status" v={selected.status} />
               </div>
             </motion.div>
@@ -84,21 +91,29 @@ function Row({ k, v }: { k: string; v: string }) {
   return <div className="flex items-center justify-between"><span className="text-muted-foreground">{k}</span><span className="font-medium capitalize">{v}</span></div>;
 }
 
-function MonthGrid({ onSelect }: { onSelect: (a: any) => void }) {
-  const days = Array.from({ length: 35 });
+function MonthGrid({ appointments, onSelect }: { appointments: Appointment[]; onSelect: (a: Appointment) => void }) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = Array.from({ length: 42 });
+
   return (
     <div className="grid grid-cols-7">
       {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => (
         <div key={d} className="p-2 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground border-b border-r border-border last:border-r-0">{d}</div>
       ))}
-      {days.map((_, i) => {
-        const day = i - 3;
-        const appts = mockAppointments.filter((_, ai) => ai % 14 === i % 14).slice(0, 2);
+      {cells.map((_, i) => {
+        const day = i - firstDay + 1;
+        const valid = day >= 1 && day <= daysInMonth;
+        const dateStr = valid ? new Date(year, month, day).toISOString().slice(0, 10) : "";
+        const appts = valid ? appointments.filter(a => a.date === dateStr).slice(0, 3) : [];
         return (
           <div key={i} className="min-h-24 border-r border-b border-border last:border-r-0 p-1.5">
-            <div className={`text-xs font-mono ${day < 1 || day > 31 ? "text-muted-foreground/40" : ""}`}>{day > 0 && day <= 31 ? day : ""}</div>
+            <div className={`text-xs font-mono ${!valid ? "text-muted-foreground/40" : ""}`}>{valid ? day : ""}</div>
             <div className="mt-1 space-y-1">
-              {day > 0 && day <= 31 && appts.map(a => (
+              {appts.map(a => (
                 <button key={a.id} onClick={() => onSelect(a)} className="w-full text-left px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary truncate hover:bg-primary/20">
                   {a.time} {a.customer.split(" ")[0]}
                 </button>
@@ -111,26 +126,37 @@ function MonthGrid({ onSelect }: { onSelect: (a: any) => void }) {
   );
 }
 
-function WeekGrid({ onSelect }: { onSelect: (a: any) => void }) {
-  const days = ["Mon 27", "Tue 28", "Wed 29", "Thu 30", "Fri 31", "Sat 1", "Sun 2"];
-  const hours = Array.from({ length: 10 }).map((_, i) => i + 8);
+function WeekGrid({ appointments, onSelect }: { appointments: Appointment[]; onSelect: (a: Appointment) => void }) {
+  const now = new Date();
+  const start = new Date(now);
+  start.setDate(now.getDate() - now.getDay());
+  const days = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    return d;
+  });
+  const hours = Array.from({ length: 11 }).map((_, i) => i + 8);
+
   return (
-    <div>
-      <div className="grid grid-cols-[60px_repeat(7,1fr)] border-b border-border">
+    <div className="overflow-x-auto">
+      <div className="grid grid-cols-[60px_repeat(7,1fr)] border-b border-border min-w-[640px]">
         <div></div>
-        {days.map(d => <div key={d} className="px-2 py-2 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground border-l border-border">{d}</div>)}
+        {days.map(d => (
+          <div key={d.toISOString()} className="px-2 py-2 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground border-l border-border">
+            {d.toLocaleDateString("en-US", { weekday: "short" })} {d.getDate()}
+          </div>
+        ))}
       </div>
-      <div className="grid grid-cols-[60px_repeat(7,1fr)]">
-        {hours.map((h, hi) => (
+      <div className="grid grid-cols-[60px_repeat(7,1fr)] min-w-[640px]">
+        {hours.map((h) => (
           <Fragment key={h}>
             <div className="px-2 py-3 text-[10px] font-mono text-muted-foreground border-b border-border text-right">{h}:00</div>
-            {Array.from({ length: 7 }).map((_, di) => {
-              const idx = hi * 7 + di;
-              const a = mockAppointments[idx % mockAppointments.length];
-              const show = idx % 3 === 0;
+            {days.map((d) => {
+              const dateStr = d.toISOString().slice(0, 10);
+              const a = appointments.find(ap => ap.date === dateStr && Number(ap.time.slice(0, 2)) === h);
               return (
-                <div key={di} className="border-l border-b border-border p-1 min-h-12 relative">
-                  {show && (
+                <div key={d.toISOString() + h} className="border-l border-b border-border p-1 min-h-12 relative">
+                  {a && (
                     <motion.button
                       layout
                       onClick={() => onSelect(a)}
@@ -150,17 +176,17 @@ function WeekGrid({ onSelect }: { onSelect: (a: any) => void }) {
   );
 }
 
-function DayList({ onSelect }: { onSelect: (a: any) => void }) {
+function DayList({ appointments, onSelect }: { appointments: Appointment[]; onSelect: (a: Appointment) => void }) {
+  const sorted = [...appointments].sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   return (
     <div className="divide-y divide-border">
-      {mockAppointments.slice(0, 10).map(a => (
-        <button key={a.id} onClick={() => onSelect(a)} className="w-full grid grid-cols-[80px_1fr_120px_80px] gap-4 items-center px-4 py-3 hover:bg-accent/40 transition text-left">
-          <span className="font-mono text-sm">{a.time}</span>
+      {sorted.map(a => (
+        <button key={a.id} onClick={() => onSelect(a)} className="w-full grid grid-cols-[160px_1fr_80px] gap-4 items-center px-4 py-3 hover:bg-accent/40 transition text-left">
+          <span className="font-mono text-sm">{a.date} {a.time}</span>
           <div>
             <div className="text-sm font-medium">{a.customer}</div>
             <div className="text-xs text-muted-foreground">{a.service}</div>
           </div>
-          <span className="text-xs text-muted-foreground">{a.duration} min</span>
           <span className="text-xs capitalize">{a.status}</span>
         </button>
       ))}

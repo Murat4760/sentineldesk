@@ -1,11 +1,15 @@
 import { Command } from "cmdk";
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { mockCalls, mockCustomers } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { callsQueryOptions, customersQueryOptions } from "@/lib/data";
 import { LayoutGrid, PhoneCall, Calendar, Bot, Users, BarChart3, CreditCard, Settings, Phone } from "lucide-react";
 
 export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const nav = useNavigate();
+  const { data: calls = [] } = useQuery(callsQueryOptions);
+  const { data: customers = [] } = useQuery(customersQueryOptions);
+
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -60,7 +64,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
           </Command.Group>
 
           <Command.Group heading="Recent calls" className="mt-2 text-xs text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-[10px]">
-            {mockCalls.slice(0, 5).map(c => (
+            {calls.slice(0, 5).map(c => (
               <Command.Item
                 key={c.id}
                 value={`${c.callerName} ${c.callerPhone}`}
@@ -75,7 +79,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
           </Command.Group>
 
           <Command.Group heading="Customers" className="mt-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:text-muted-foreground">
-            {mockCustomers.slice(0, 4).map(c => (
+            {customers.slice(0, 4).map(c => (
               <Command.Item
                 key={c.id}
                 value={c.name}

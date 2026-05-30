@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { mockCalls } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { callsQueryOptions } from "@/lib/data";
 import { WaveformPlayer } from "@/components/effects/Waveform";
 import { OutcomeBadge, SentimentDot } from "@/components/effects/SentimentBadge";
 import { ArrowLeft, Flag, StickyNote, Download } from "lucide-react";
@@ -13,11 +14,25 @@ export const Route = createFileRoute("/_app/calls/$id")({
 
 function CallDetail() {
   const { id } = useParams({ from: "/_app/calls/$id" });
-  const call = mockCalls.find(c => c.id === id) ?? mockCalls[0];
+  const { data: calls = [] } = useQuery(callsQueryOptions);
+  const call = calls.find(c => c.id === id);
+
+  if (!call) {
+    return (
+      <div className="p-6 max-w-6xl mx-auto">
+        <Link to="/calls" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition mb-4">
+          <ArrowLeft className="size-3" /> Back to calls
+        </Link>
+        <div className="border border-border bg-card rounded-lg px-4 py-16 text-center text-sm text-muted-foreground">Call not found.</div>
+      </div>
+    );
+  }
+
   const sentimentData = call.transcript.map((t, i) => ({
     t: t.time,
     v: 0.5 + Math.sin(i * 0.7) * 0.3 + (t.role === "ai" ? 0.1 : -0.05),
   }));
+
 
   return (
     <div className="p-6 max-w-6xl mx-auto">

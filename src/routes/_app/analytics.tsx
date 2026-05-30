@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, BarChart, Bar } from "recharts";
-import { callsPerDay, outcomeBreakdown, topicBreakdown } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { callsQueryOptions, buildCallsPerDay, buildOutcomeBreakdown, buildTopicBreakdown } from "@/lib/data";
 import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_app/analytics")({
@@ -9,7 +10,12 @@ export const Route = createFileRoute("/_app/analytics")({
 });
 
 function Analytics() {
+  const { data: calls = [] } = useQuery(callsQueryOptions);
+  const callsPerDay = buildCallsPerDay(calls);
+  const outcomeBreakdown = buildOutcomeBreakdown(calls);
+  const topicBreakdown = buildTopicBreakdown(calls);
   return (
+
     <div className="p-6 max-w-[1400px] mx-auto">
       <div className="flex items-end justify-between mb-6">
         <div>

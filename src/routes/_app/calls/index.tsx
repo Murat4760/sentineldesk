@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { mockCalls } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { callsQueryOptions } from "@/lib/data";
 import { OutcomeBadge, SentimentDot } from "@/components/effects/SentimentBadge";
 import { Search, Download, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -14,15 +15,17 @@ export const Route = createFileRoute("/_app/calls/")({
 const OUTCOMES = ["booked", "info", "missed", "voicemail", "transferred"] as const;
 
 function CallsList() {
+  const { data: calls = [] } = useQuery(callsQueryOptions);
   const [q, setQ] = useState("");
   const [selectedOut, setSelectedOut] = useState<string[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  const filtered = useMemo(() => mockCalls.filter(c => {
+  const filtered = useMemo(() => calls.filter(c => {
     if (selectedOut.length && !selectedOut.includes(c.outcome)) return false;
     if (q && !`${c.callerName} ${c.callerPhone}`.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
-  }), [q, selectedOut]);
+  }), [calls, q, selectedOut]);
+
 
   const toggle = (id: string) => {
     setSelectedIds(prev => {
@@ -37,7 +40,7 @@ function CallsList() {
       <div className="flex items-end justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Calls</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{filtered.length} of {mockCalls.length} calls</p>
+          <p className="text-sm text-muted-foreground mt-0.5">{filtered.length} of {calls.length} calls</p>
         </div>
         <button
           onClick={() => toast.success("Exported calls.csv", { description: `${filtered.length} rows · 12 KB` })}
