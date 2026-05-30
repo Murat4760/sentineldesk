@@ -86,6 +86,7 @@ function CallDetail() {
             <Row k="Preferred date" v={call.extracted.preferredDate ?? "—"} />
             <Row k="Preferred time" v={call.extracted.preferredTime ?? "—"} />
             <Row k="New patient" v={call.extracted.isNewPatient ? "Yes" : "No"} />
+            <Row k="Asked about hours" v={call.extracted.businessHours ? "Yes" : "No"} />
           </Section>
           <Section title="Action items">
             <ul className="space-y-1.5 text-sm">
