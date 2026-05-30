@@ -74,9 +74,15 @@ export const Route = createFileRoute("/api/vapi-webhook")({
           const transcript: string = body.message.transcript ?? "";
           const summary: string = body.message.summary ?? "";
 
+          // Always extract details from the transcript, regardless of intent.
+          const { date: preferredDate, time: preferredTime } = extractPreferredDateTime(transcript);
           const extracted = {
             intent: summary.includes("randevu") ? "book_appointment" : "info",
             service: extractService(transcript),
+            preferredDate,
+            preferredTime,
+            businessHours: extractBusinessHoursAsk(transcript),
+            isNewPatient: isNewPatient(transcript),
             notes: summary,
           };
 
@@ -199,6 +205,46 @@ function extractService(transcript: string): string {
   if (t.includes("kontrol")) return "Kontrol";
   if (t.includes("çekim") || t.includes("çekimi")) return "Diş Çekimi";
   return "Genel";
+}
+
+const TURKISH_DAYS = ["pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi", "pazar"];
+
+// Extract a human-readable Turkish day name and time (e.g. "14:00") from the
+// transcript, independent of intent. Either field may be empty if not found.
+function extractPreferredDateTime(transcript: string): { date: string; time: string } {
+  const lower = transcript.toLowerCase();
+  let date = "";
+  for (const day of TURKISH_DAYS) {
+    if (lower.includes(day)) {
+      date = day.charAt(0).toLocaleUpperCase("tr-TR") + day.slice(1);
+      break;
+    }
+  }
+  let time = "";
+  const timeMatch = transcript.match(/\b([01]?\d|2[0-3])[:.]([0-5]\d)\b/);
+  if (timeMatch) {
+    time = `${timeMatch[1].padStart(2, "0")}:${timeMatch[2]}`;
+  }
+  return { date, time };
+}
+
+// True when the caller is asking about the business's opening hours.
+function extractBusinessHoursAsk(transcript: string): boolean {
+  const t = transcript.toLowerCase();
+  return (
+    t.includes("çalışma saat") ||
+    t.includes("açılış saat") ||
+    t.includes("kaçta açık") ||
+    t.includes("kaça kadar") ||
+    t.includes("saat kaçta") ||
+    t.includes("açık mısınız")
+  );
+}
+
+// True when the caller identifies as a first-time / new patient.
+function isNewPatient(transcript: string): boolean {
+  const t = transcript.toLowerCase();
+  return t.includes("ilk defa") || t.includes("yeni hasta");
 }
 
 function extractAppointmentTime(transcript: string): string | null {
