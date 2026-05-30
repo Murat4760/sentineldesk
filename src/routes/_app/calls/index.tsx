@@ -40,7 +40,7 @@ function CallsList() {
       <div className="flex items-end justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Calls</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{filtered.length} of {mockCalls.length} calls</p>
+          <p className="text-sm text-muted-foreground mt-0.5">{filtered.length} of {calls.length} calls</p>
         </div>
         <button
           onClick={() => toast.success("Exported calls.csv", { description: `${filtered.length} rows · 12 KB` })}
