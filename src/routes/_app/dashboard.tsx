@@ -1,40 +1,35 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { StatCard } from "@/components/effects/StatCard";
-import { mockCalls, mockAppointments } from "@/lib/mock-data";
+import { callsQueryOptions, appointmentsQueryOptions, type Call } from "@/lib/data";
 import { LiveWaveform } from "@/components/effects/Waveform";
 import { OutcomeBadge, SentimentDot } from "@/components/effects/SentimentBadge";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronRight, Plus, Bot, BarChart3, PhoneCall } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { CallDrawer } from "@/components/effects/CallDrawer";
-import type { Call } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/_app/dashboard")({
   component: Dashboard,
 });
 
 function Dashboard() {
-  const [feed, setFeed] = useState(mockCalls.slice(0, 8));
+  const { data: calls = [] } = useQuery(callsQueryOptions);
+  const { data: appointments = [] } = useQuery(appointmentsQueryOptions);
   const [drawer, setDrawer] = useState<Call | null>(null);
 
-  useEffect(() => {
-    const i = setInterval(() => {
-      setFeed(prev => {
-        const pool = mockCalls.filter(c => !prev.find(p => p.id === c.id));
-        if (!pool.length) return prev;
-        const next = pool[Math.floor(Math.random() * pool.length)];
-        return [{ ...next, timestamp: new Date().toISOString() }, ...prev].slice(0, 10);
-      });
-    }, 22000);
-    return () => clearInterval(i);
-  }, []);
+  const feed = calls.slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  const callsToday = calls.filter((c) => c.timestamp.slice(0, 10) === today).length;
+  const apptsToday = appointments.filter((a) => a.date === today);
+  const avgDuration = calls.length ? Math.round(calls.reduce((s, c) => s + c.duration, 0) / calls.length) : 0;
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
       <div className="flex items-end justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Good morning, Marcus</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Here's what's happening with your agent today.</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
@@ -46,11 +41,12 @@ function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Calls today" value={47} trend={12} index={0} />
-        <StatCard label="Appointments" value={12} trend={8} index={1} />
-        <StatCard label="Avg duration" value={154} suffix="s" trend={-4} index={2} sub="2:34 per call" />
-        <StatCard label="Minutes used" value={847} sub="of 2,000 this month" index={3} />
+        <StatCard label="Calls today" value={callsToday} index={0} />
+        <StatCard label="Appointments" value={appointments.length} index={1} />
+        <StatCard label="Avg duration" value={avgDuration} suffix="s" index={2} sub={`${Math.floor(avgDuration / 60)}:${String(avgDuration % 60).padStart(2, "0")} per call`} />
+        <StatCard label="Total calls" value={calls.length} index={3} sub="all time" />
       </div>
+
 
       <div className="mt-6 grid lg:grid-cols-3 gap-6">
         {/* Live call feed */}
