@@ -106,7 +106,7 @@ export const Route = createFileRoute("/api/vapi-webhook")({
 
           const callerPhone: string = call.customer?.number ?? "unknown";
 
-          const ownerId = await resolveOwnerId(supabase);
+          const ownerId = await resolveOwnerId(supabase, call.assistantId);
           if (!ownerId) {
             console.warn(
               "[vapi-webhook] owner_id is null; rows may not appear in owner-scoped dashboard queries",
