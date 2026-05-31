@@ -199,11 +199,43 @@ export const saveOnboarding = createServerFn({ method: "POST" })
       .maybeSingle();
 
     const prevConfig = (existingVc?.config ?? {}) as Record<string, unknown>;
+
+    // Generate the personalized Turkish system prompt for this tenant.
+    const hoursText = formatHours(data.businessHours);
+    const servicesText = data.services.join(", ");
+    const systemPrompt = buildSystemPrompt(
+      data.industry,
+      data.name,
+      hoursText,
+      servicesText,
+    );
+
+    const prevAssistantId =
+      typeof (prevConfig as { assistantId?: unknown }).assistantId === "string"
+        ? ((prevConfig as { assistantId?: string }).assistantId as string)
+        : null;
+
+    // Only create a new assistant if one doesn't already exist for this user.
+    let assistantId = prevAssistantId;
+    let provisioningStatus: "active" | "pending" = prevAssistantId
+      ? "active"
+      : "pending";
+    if (!assistantId) {
+      assistantId = await createVapiAssistant({
+        businessName: data.name,
+        greeting: data.greeting,
+        systemPrompt,
+      });
+      provisioningStatus = assistantId ? "active" : "pending";
+    }
+
     const nextConfig = {
       ...prevConfig,
       businessHours: data.businessHours,
       services: data.services,
       greeting: data.greeting,
+      systemPrompt,
+      provisioningStatus,
     };
 
     if (existingVc?.id) {
@@ -211,6 +243,7 @@ export const saveOnboarding = createServerFn({ method: "POST" })
         .from("voice_configs")
         .update({
           business_id: businessId,
+          assistant_id: assistantId,
           config: nextConfig,
           updated_at: new Date().toISOString(),
         })
@@ -221,10 +254,11 @@ export const saveOnboarding = createServerFn({ method: "POST" })
       const { error } = await supabase.from("voice_configs").insert({
         owner_id: userId,
         business_id: businessId,
+        assistant_id: assistantId,
         config: nextConfig,
       });
       if (error) throw new Error(error.message);
     }
 
-    return { ok: true, businessId };
+    return { ok: true, businessId, assistantId, provisioningStatus };
   });
