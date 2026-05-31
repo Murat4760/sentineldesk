@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -23,8 +24,11 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   const search = mode === "signin" ? Route.useSearch() : { redirect: "/dashboard" };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const title = mode === "signin" ? "Tekrar hoş geldiniz" : "Ücretsiz hesap oluşturun";
@@ -37,6 +41,16 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setErrorMessage("");
+    setFieldErrors({});
+    if (mode === "signup") {
+      const errors: Record<string, string> = {};
+      if (password.length < 6) errors.password = "Parola en az 6 karakter olmalıdır.";
+      if (password !== confirmPassword) errors.confirmPassword = "Parolalar eşleşmiyor.";
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
+        return;
+      }
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
@@ -114,6 +128,20 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
                 </button>
               </div>
             </div>
+            {mode === "signup" && (
+              <div>
+                <label className="text-xs font-medium">Parolayı Onayla</label>
+                <div className="relative mt-1">
+                  <input type={showConfirm ? "text" : "password"} required minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" className={cn("w-full h-10 px-3 pr-10 rounded-md border bg-background text-sm outline-none focus:border-primary transition", fieldErrors.confirmPassword ? "border-destructive focus:border-destructive" : "border-input")} />
+                  <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition" tabIndex={-1}>
+                    {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
+                {fieldErrors.confirmPassword && (
+                  <p className="mt-1 text-xs text-destructive">{fieldErrors.confirmPassword}</p>
+                )}
+              </div>
+            )}
             {mode === "signin" && (
               <div className="text-right">
                 <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground hover:underline">
