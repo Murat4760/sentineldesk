@@ -23,17 +23,35 @@ function getSupabase() {
 
 // Vapi has no concept of the app user, so inserted rows must be stamped with
 // an owner_id or RLS (auth.uid() = owner_id) will hide them in the dashboard.
-// Resolution order:
-//   1. WORKSPACE_OWNER_ID env var (explicit, preferred for multi-user setups)
-//   2. The first existing auth user (temporary debug fallback)
+// Resolution order (multi-tenant routing):
+//   1. voice_configs.owner_id matching the call's assistant_id (per-business)
+//   2. WORKSPACE_OWNER_ID env var (fallback, keeps the original account working)
+//   3. The first existing auth user (temporary debug fallback)
 async function resolveOwnerId(
   supabase: ReturnType<typeof getSupabase>,
+  assistantId?: string | null,
 ): Promise<string | null> {
+  // 1. Route by assistant_id → business owner
+  if (assistantId) {
+    const { data: vc, error: vcErr } = await supabase
+      .from("voice_configs")
+      .select("owner_id")
+      .eq("assistant_id", assistantId)
+      .maybeSingle();
+    if (vcErr) {
+      console.error("[vapi-webhook] voice_configs lookup error:", vcErr.message);
+    } else if (vc?.owner_id) {
+      return vc.owner_id;
+    }
+  }
+
+  // 2. Fallback to the configured workspace owner.
   const envOwner = process.env.WORKSPACE_OWNER_ID;
   if (envOwner) {
     return envOwner;
   }
 
+  // 3. Last-resort debug fallback: first existing auth user.
   const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
   if (error) {
     console.error("[vapi-webhook] listUsers error:", error.message);
@@ -88,7 +106,7 @@ export const Route = createFileRoute("/api/vapi-webhook")({
 
           const callerPhone: string = call.customer?.number ?? "unknown";
 
-          const ownerId = await resolveOwnerId(supabase);
+          const ownerId = await resolveOwnerId(supabase, call.assistantId);
           if (!ownerId) {
             console.warn(
               "[vapi-webhook] owner_id is null; rows may not appear in owner-scoped dashboard queries",
