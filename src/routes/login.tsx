@@ -40,6 +40,16 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setErrorMessage("");
+    setFieldErrors({});
+    if (mode === "signup") {
+      const errors: Record<string, string> = {};
+      if (password.length < 6) errors.password = "Parola en az 6 karakter olmalıdır.";
+      if (password !== confirmPassword) errors.confirmPassword = "Parolalar eşleşmiyor.";
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
+        return;
+      }
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
