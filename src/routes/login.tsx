@@ -23,8 +23,11 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   const search = mode === "signin" ? Route.useSearch() : { redirect: "/dashboard" };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const title = mode === "signin" ? "Tekrar hoş geldiniz" : "Ücretsiz hesap oluşturun";
