@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { LiveWaveform } from "@/components/effects/Waveform";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +23,7 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   const search = mode === "signin" ? Route.useSearch() : { redirect: "/dashboard" };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -106,7 +107,12 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
             </div>
             <div>
               <label className="text-xs font-medium">Parola</label>
-              <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 w-full h-10 px-3 rounded-md border border-input bg-background text-sm outline-none focus:border-primary transition" />
+              <div className="relative mt-1">
+                <input type={showPassword ? "text" : "password"} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full h-10 px-3 pr-10 rounded-md border border-input bg-background text-sm outline-none focus:border-primary transition" />
+                <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition" tabIndex={-1}>
+                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
             </div>
             {mode === "signin" && (
               <div className="text-right">
