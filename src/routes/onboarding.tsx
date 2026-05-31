@@ -81,7 +81,7 @@ function Onboarding() {
   async function finish() {
     setSaving(true);
     try {
-      await save({
+      const result = await save({
         data: {
           name: name.trim(),
           industry,
@@ -91,7 +91,13 @@ function Onboarding() {
         },
       });
       confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
-      toast.success("İşletmeniz oluşturuldu.");
+      if (result?.provisioningStatus === "pending") {
+        toast.warning(
+          "İşletmeniz oluşturuldu. Asistan atanıyor, kısa süre içinde aktif olacak.",
+        );
+      } else {
+        toast.success("İşletmeniz oluşturuldu.");
+      }
       setTimeout(() => nav({ to: "/dashboard" }), 700);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Bir hata oluştu");
