@@ -28,6 +28,98 @@ const OnboardingSchema = z.object({
 
 export type OnboardingInput = z.infer<typeof OnboardingSchema>;
 
+const DAY_LABELS: Record<string, string> = {
+  mon: "Pazartesi",
+  tue: "Salı",
+  wed: "Çarşamba",
+  thu: "Perşembe",
+  fri: "Cuma",
+  sat: "Cumartesi",
+  sun: "Pazar",
+};
+
+// Build a human-readable Turkish hours string from the weekly schedule.
+function formatHours(hours: OnboardingInput["businessHours"]): string {
+  return (Object.keys(DAY_LABELS) as (keyof typeof hours)[])
+    .map((d) => {
+      const day = hours[d];
+      const label = DAY_LABELS[d as string];
+      if (day.closed) return `${label} kapalı`;
+      return `${label} ${day.open}-${day.close}`;
+    })
+    .join(", ");
+}
+
+// Generate a Turkish system prompt from the industry template + onboarding data.
+function buildSystemPrompt(
+  industry: Industry,
+  businessName: string,
+  hours: string,
+  services: string,
+): string {
+  const servicesText = services || "Genel";
+  switch (industry) {
+    case "dental":
+      return `Sen ${businessName} diş kliniğinin profesyonel sekreterisin. Çalışma saatleri: ${hours}. Hizmetler: ${servicesText}. Randevu için isim, hizmet, gün ve saat al. Telefon sorma, otomatik kayıtlıdır. Türkçe, kısa ve doğal konuş.`;
+    case "salon":
+      return `Sen ${businessName} kuaför salonunun profesyonel sekreterisin. Çalışma saatleri: ${hours}. Hizmetler: ${servicesText}. Randevu için isim, hizmet, gün ve saat al. Telefon sorma, otomatik kayıtlıdır. Türkçe, kısa ve doğal konuş.`;
+    case "hvac":
+      return `Sen ${businessName} klima ve servis firmasının profesyonel sekreterisin. Çalışma saatleri: ${hours}. Hizmetler: ${servicesText}. Servis randevusu için isim, hizmet, gün ve saat al. Telefon sorma, otomatik kayıtlıdır. Türkçe, kısa ve doğal konuş.`;
+    case "restaurant":
+      return `Sen ${businessName} restoranının profesyonel sekreterisin. Çalışma saatleri: ${hours}. Sunulanlar: ${servicesText}. Rezervasyon için isim, kişi sayısı, gün ve saat al. Telefon sorma, otomatik kayıtlıdır. Türkçe, kısa ve doğal konuş.`;
+    default:
+      return `Sen ${businessName} işletmesinin profesyonel sekreterisin. Çalışma saatleri: ${hours}. Hizmetler: ${servicesText}. Randevu için isim, hizmet, gün ve saat al. Telefon sorma, otomatik kayıtlıdır. Türkçe, kısa ve doğal konuş.`;
+  }
+}
+
+// Create a Vapi assistant. Returns the assistant id, or null on any failure
+// so onboarding never crashes when the external API is unavailable.
+async function createVapiAssistant(params: {
+  businessName: string;
+  greeting: string;
+  systemPrompt: string;
+}): Promise<string | null> {
+  const apiKey = process.env.VAPI_API_KEY;
+  if (!apiKey) {
+    console.error("[onboarding] VAPI_API_KEY missing; skipping assistant creation");
+    return null;
+  }
+  try {
+    const res = await fetch("https://api.vapi.ai/assistant", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: `${params.businessName} Assistant`,
+        model: {
+          provider: "openai",
+          model: "gpt-4o-mini",
+          messages: [{ role: "system", content: params.systemPrompt }],
+        },
+        voice: {
+          provider: "11labs",
+          voiceId: "Ope2onakyzougbvh45ku",
+          model: "eleven_turbo_v2_5",
+        },
+        transcriber: { provider: "deepgram", model: "nova-3", language: "tr" },
+        firstMessage: params.greeting,
+      }),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.error(`[onboarding] Vapi assistant create failed: ${res.status} ${text}`);
+      return null;
+    }
+    const json = (await res.json()) as { id?: string };
+    return json?.id ?? null;
+  } catch (error) {
+    console.error("[onboarding] Vapi assistant create error:", error);
+    return null;
+  }
+}
+
 // Returns the existing business + config for the logged-in user (if any)
 export const getMyBusiness = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
