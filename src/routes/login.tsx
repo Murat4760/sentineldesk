@@ -144,6 +144,25 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
                 )}
               </div>
             )}
+            {mode === "signup" && (
+              <div>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    className="mt-0.5 size-4 shrink-0 rounded border-input accent-primary cursor-pointer"
+                  />
+                  <span className="text-xs text-muted-foreground leading-snug">
+                    <Link to="/gizlilik" className="text-foreground hover:underline">Gizlilik Politikası</Link> ve{" "}
+                    <Link to="/kvkk" className="text-foreground hover:underline">KVKK Aydınlatma Metni</Link>'ni okudum ve kabul ediyorum
+                  </span>
+                </label>
+                {fieldErrors.consent && (
+                  <p className="mt-1 text-xs text-destructive">{fieldErrors.consent}</p>
+                )}
+              </div>
+            )}
             {mode === "signin" && (
               <div className="text-right">
                 <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground hover:underline">
