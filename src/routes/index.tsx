@@ -933,7 +933,17 @@ function Landing() {
             ))}
           </div>
 
-          <div className="mt-14 pt-6 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
+          <div className="mt-14 pt-6 border-t border-white/5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-white/50">
+            <Link to="/gizlilik" className="hover:text-white transition">Gizlilik Politikası</Link>
+            <span className="text-white/20">|</span>
+            <Link to="/kvkk" className="hover:text-white transition">KVKK</Link>
+            <span className="text-white/20">|</span>
+            <Link to="/cerez" className="hover:text-white transition">Çerez Politikası</Link>
+            <span className="text-white/20">|</span>
+            <Link to="/kullanim-kosullari" className="hover:text-white transition">Kullanım Koşulları</Link>
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-[12px] font-mono text-white/50">
               <span className="size-1.5 rounded-full bg-[#4ADE80] dot-pulse" />
               Tüm sistemler çalışıyor
