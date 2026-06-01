@@ -27,6 +27,7 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [consent, setConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,7 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
       const errors: Record<string, string> = {};
       if (password.length < 6) errors.password = "Parola en az 6 karakter olmalıdır.";
       if (password !== confirmPassword) errors.confirmPassword = "Parolalar eşleşmiyor.";
+      if (!consent) errors.consent = "Devam etmek için onay kutusunu işaretlemelisiniz.";
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors);
         return;
