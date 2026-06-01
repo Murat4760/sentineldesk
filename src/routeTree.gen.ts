@@ -13,7 +13,11 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as KvkkRouteImport } from './routes/kvkk'
+import { Route as KullanimKosullariRouteImport } from './routes/kullanim-kosullari'
+import { Route as GizlilikRouteImport } from './routes/gizlilik'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as CerezRouteImport } from './routes/cerez'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiVapiWebhookRouteImport } from './routes/api/vapi-webhook'
@@ -47,9 +51,29 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KvkkRoute = KvkkRouteImport.update({
+  id: '/kvkk',
+  path: '/kvkk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KullanimKosullariRoute = KullanimKosullariRouteImport.update({
+  id: '/kullanim-kosullari',
+  path: '/kullanim-kosullari',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GizlilikRoute = GizlilikRouteImport.update({
+  id: '/gizlilik',
+  path: '/gizlilik',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CerezRoute = CerezRouteImport.update({
+  id: '/cerez',
+  path: '/cerez',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -114,7 +138,11 @@ const AppCallsIdRoute = AppCallsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cerez': typeof CerezRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gizlilik': typeof GizlilikRoute
+  '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/kvkk': typeof KvkkRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -132,7 +160,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cerez': typeof CerezRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gizlilik': typeof GizlilikRoute
+  '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/kvkk': typeof KvkkRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -152,7 +184,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/cerez': typeof CerezRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gizlilik': typeof GizlilikRoute
+  '/kullanim-kosullari': typeof KullanimKosullariRoute
+  '/kvkk': typeof KvkkRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -172,7 +208,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/cerez'
     | '/forgot-password'
+    | '/gizlilik'
+    | '/kullanim-kosullari'
+    | '/kvkk'
     | '/login'
     | '/onboarding'
     | '/reset-password'
@@ -190,7 +230,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cerez'
     | '/forgot-password'
+    | '/gizlilik'
+    | '/kullanim-kosullari'
+    | '/kvkk'
     | '/login'
     | '/onboarding'
     | '/reset-password'
@@ -209,7 +253,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/cerez'
     | '/forgot-password'
+    | '/gizlilik'
+    | '/kullanim-kosullari'
+    | '/kvkk'
     | '/login'
     | '/onboarding'
     | '/reset-password'
@@ -229,7 +277,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  CerezRoute: typeof CerezRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  GizlilikRoute: typeof GizlilikRoute
+  KullanimKosullariRoute: typeof KullanimKosullariRoute
+  KvkkRoute: typeof KvkkRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -267,11 +319,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kvkk': {
+      id: '/kvkk'
+      path: '/kvkk'
+      fullPath: '/kvkk'
+      preLoaderRoute: typeof KvkkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kullanim-kosullari': {
+      id: '/kullanim-kosullari'
+      path: '/kullanim-kosullari'
+      fullPath: '/kullanim-kosullari'
+      preLoaderRoute: typeof KullanimKosullariRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gizlilik': {
+      id: '/gizlilik'
+      path: '/gizlilik'
+      fullPath: '/gizlilik'
+      preLoaderRoute: typeof GizlilikRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forgot-password': {
       id: '/forgot-password'
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cerez': {
+      id: '/cerez'
+      path: '/cerez'
+      fullPath: '/cerez'
+      preLoaderRoute: typeof CerezRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -390,7 +470,11 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  CerezRoute: CerezRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  GizlilikRoute: GizlilikRoute,
+  KullanimKosullariRoute: KullanimKosullariRoute,
+  KvkkRoute: KvkkRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   ResetPasswordRoute: ResetPasswordRoute,

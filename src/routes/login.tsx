@@ -27,6 +27,7 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [consent, setConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,7 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
       const errors: Record<string, string> = {};
       if (password.length < 6) errors.password = "Parola en az 6 karakter olmalıdır.";
       if (password !== confirmPassword) errors.confirmPassword = "Parolalar eşleşmiyor.";
+      if (!consent) errors.consent = "Devam etmek için onay kutusunu işaretlemelisiniz.";
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors);
         return;
@@ -139,6 +141,25 @@ export function AuthLayout({ mode }: { mode: "signin" | "signup" }) {
                 </div>
                 {fieldErrors.confirmPassword && (
                   <p className="mt-1 text-xs text-destructive">{fieldErrors.confirmPassword}</p>
+                )}
+              </div>
+            )}
+            {mode === "signup" && (
+              <div>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    className="mt-0.5 size-4 shrink-0 rounded border-input accent-primary cursor-pointer"
+                  />
+                  <span className="text-xs text-muted-foreground leading-snug">
+                    <Link to="/gizlilik" className="text-foreground hover:underline">Gizlilik Politikası</Link> ve{" "}
+                    <Link to="/kvkk" className="text-foreground hover:underline">KVKK Aydınlatma Metni</Link>'ni okudum ve kabul ediyorum
+                  </span>
+                </label>
+                {fieldErrors.consent && (
+                  <p className="mt-1 text-xs text-destructive">{fieldErrors.consent}</p>
                 )}
               </div>
             )}
