@@ -97,10 +97,28 @@ export const Route = createFileRoute("/api/vapi-webhook")({
 
           const ownerId = await resolveOwnerId(supabase, call.assistantId);
           if (!ownerId) {
-            console.warn(
-              "[vapi-webhook] owner_id is null; rows may not appear in owner-scoped dashboard queries",
+            console.error(
+              `[vapi-webhook] unresolved owner_id for assistantId: ${call.assistantId}`,
+            );
+            return new Response(
+              JSON.stringify({ received: true, skipped: "unresolved_owner", assistantId: call.assistantId }),
+              { status: 200 },
             );
           }
+
+          // Skip writes for inactive (unpaid/suspended) tenants.
+          const { data: business, error: bizErr } = await supabase
+            .from("businesses")
+            .select("id, is_active")
+            .eq("owner_id", ownerId)
+            .maybeSingle();
+          if (bizErr) console.error("[vapi-webhook] business lookup error:", bizErr.message);
+          if (business && business.is_active === false) {
+            console.warn(`[vapi-webhook] inactive tenant skipped: ${business.id}`);
+            return Response.json({ received: true, skipped: "inactive_tenant" }, { status: 200 });
+          }
+
+
 
 
           // Find or create customer
