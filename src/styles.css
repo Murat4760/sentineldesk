@@ -47,8 +47,6 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
-
 :root {
   --radius: 0.5rem;
   --background: oklch(0.985 0.002 90);
