@@ -73,9 +73,13 @@ export type Database = {
           email: string | null
           id: string
           industry: string | null
+          is_active: boolean
           name: string
+          net_price: number | null
           owner_id: string | null
+          paid_until: string | null
           phone: string | null
+          subscription_status: string
           updated_at: string
         }
         Insert: {
@@ -83,9 +87,13 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
+          is_active?: boolean
           name: string
+          net_price?: number | null
           owner_id?: string | null
+          paid_until?: string | null
           phone?: string | null
+          subscription_status?: string
           updated_at?: string
         }
         Update: {
@@ -93,9 +101,13 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
+          is_active?: boolean
           name?: string
+          net_price?: number | null
           owner_id?: string | null
+          paid_until?: string | null
           phone?: string | null
+          subscription_status?: string
           updated_at?: string
         }
         Relationships: []
@@ -200,6 +212,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          amount_gross: number
+          business_id: string
+          created_at: string
+          id: string
+          iyzico_payment_id: string | null
+          kdv_rate: number
+          net_amount: number
+          paid_at: string | null
+          status: string
+        }
+        Insert: {
+          amount_gross: number
+          business_id: string
+          created_at?: string
+          id?: string
+          iyzico_payment_id?: string | null
+          kdv_rate?: number
+          net_amount: number
+          paid_at?: string | null
+          status?: string
+        }
+        Update: {
+          amount_gross?: number
+          business_id?: string
+          created_at?: string
+          id?: string
+          iyzico_payment_id?: string | null
+          kdv_rate?: number
+          net_amount?: number
+          paid_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       voice_configs: {
         Row: {
