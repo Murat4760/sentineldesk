@@ -7,9 +7,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app")({
+  // Disable SSR for the protected subtree: the session lives in
+  // localStorage (unreadable on the server), so server-rendering this
+  // layout would deliver the authenticated chrome to anonymous visitors.
+  // With ssr:false the guard below always runs on the client before render.
+  ssr: false,
   beforeLoad: async ({ location }) => {
-    if (typeof window === "undefined") return;
-
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
       throw redirect({
