@@ -51,17 +51,6 @@ async function resolveOwnerId(
     return envOwner;
   }
 
-  // 3. Last-resort debug fallback: first existing auth user.
-  const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
-  if (error) {
-    console.error("[vapi-webhook] listUsers error:", error.message);
-    return null;
-  }
-  const users = data?.users ?? [];
-  if (users[0]?.id) {
-    return users[0].id;
-  }
-  console.warn("[vapi-webhook] could not auto-resolve owner_id; no auth users found");
   return null;
 }
 
