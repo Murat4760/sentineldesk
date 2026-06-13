@@ -126,6 +126,7 @@ export const Route = createFileRoute("/api/vapi-webhook")({
             .from("customers")
             .select("id, total_calls")
             .eq("phone", callerPhone)
+            .eq("owner_id", ownerId)
             .maybeSingle();
 
           if (findErr) console.error("[vapi-webhook] customer lookup error:", findErr.message);
